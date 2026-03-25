@@ -464,18 +464,18 @@ class DashboardPage(QWidget):
 
     def _quick_start_engine(self):
         if self._main_window:
-            self._main_window._shortcut_switch_page(1)
-            page = self._main_window.stack.widget(1)
+            self._main_window._shortcut_switch_page(2)
+            page = self._main_window.stack.widget(2)
             if hasattr(page, "start_engine"):
                 page.start_engine()
 
     def _quick_run_backtest(self):
         if self._main_window:
-            self._main_window._shortcut_switch_page(3)
+            self._main_window._shortcut_switch_page(4)
 
     def _quick_fetch_data(self):
         if self._main_window:
-            self._main_window._shortcut_switch_page(4)
+            self._main_window._shortcut_switch_page(5)
 
     def update_from_engine(self, status: dict):
         """Update dashboard from engine status dict."""

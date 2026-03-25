@@ -6,16 +6,27 @@ build-backend = "setuptools.build_meta"
 name = "quanta-engine"
 version = "1.0.0"
 description = "Self-improving prediction and trading engine — integrates forecasting with automated execution"
+readme = "README.md"
 license = {text = "Proprietary"}
 authors = [{name = "Zain Dana Harper"}]
 requires-python = ">=3.10"
 dependencies = ["numpy>=1.24", "scipy>=1.10"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Programming Language :: Python :: 3",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+
+[project.urls]
+Homepage = "https://github.com/HarperZ9/quanta-engine"
+Repository = "https://github.com/HarperZ9/quanta-engine"
+Issues = "https://github.com/HarperZ9/quanta-engine/issues"
 
 [project.scripts]
 quanta-engine = "quanta_engine.cli:main"
 
 [project.optional-dependencies]
-gui = ["PyQt6>=6.5,<7"]
+gui = ["PyQt6>=6.5,<7", "quanta-ui>=1.0.0"]
 all = ["PyQt6>=6.5,<7"]
 
 [tool.setuptools.packages.find]
