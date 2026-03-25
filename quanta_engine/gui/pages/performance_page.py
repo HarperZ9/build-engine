@@ -393,6 +393,58 @@ class PerformancePage(QWidget):
         overall_lay.addStretch()
         layout.addWidget(card_overall)
 
+        # Row 4: Risk Metrics
+        card_risk, risk_lay = Card.with_layout()
+        risk_lay.addWidget(Heading("Risk Metrics", level=2))
+
+        risk_row = QHBoxLayout()
+        risk_row.setSpacing(20)
+        self._stat_sharpe = Stat("Sharpe Ratio", "1.24", C.GREEN)
+        self._stat_sortino = Stat("Sortino Ratio", "1.87", C.GREEN)
+        self._stat_drawdown = Stat("Max Drawdown", "-8.3%", C.RED)
+        self._stat_win_rate = Stat("Win Rate", "61%", C.GREEN)
+        risk_row.addWidget(self._stat_sharpe)
+        risk_row.addWidget(self._stat_sortino)
+        risk_row.addWidget(self._stat_drawdown)
+        risk_row.addWidget(self._stat_win_rate)
+        risk_row.addStretch()
+        risk_lay.addLayout(risk_row)
+        layout.addWidget(card_risk)
+
+        # Row 5: Regime Change Alerts
+        card_regime, regime_lay = Card.with_layout()
+        regime_lay.addWidget(Heading("Regime Change Alerts", level=2))
+
+        self._regime_container = QVBoxLayout()
+        self._regime_container.setSpacing(6)
+        regime_lay.addLayout(self._regime_container)
+
+        self._regime_labels = []
+        for _ in range(5):
+            row_widget = QWidget()
+            row_lay = QHBoxLayout(row_widget)
+            row_lay.setContentsMargins(0, 2, 0, 2)
+            row_lay.setSpacing(8)
+
+            dot = StatusDot(C.TEXT3, 8)
+            row_lay.addWidget(dot)
+
+            ts_label = QLabel("--")
+            ts_label.setFixedWidth(120)
+            ts_label.setStyleSheet(f"color: {C.TEXT2}; font-size: 11px;")
+            row_lay.addWidget(ts_label)
+
+            msg_label = QLabel("--")
+            msg_label.setStyleSheet(f"color: {C.TEXT}; font-size: 12px;")
+            row_lay.addWidget(msg_label)
+            row_lay.addStretch()
+
+            self._regime_container.addWidget(row_widget)
+            self._regime_labels.append((dot, ts_label, msg_label))
+
+        regime_lay.addStretch()
+        layout.addWidget(card_regime)
+
         layout.addStretch()
 
         scroll.setWidget(container)
@@ -466,6 +518,22 @@ class PerformancePage(QWidget):
             "prophet": gen_weight_series(0.30),
             "neural": gen_weight_series(0.23),
         })
+
+        # Regime change alerts demo
+        demo_alerts = [
+            (C.RED, "03/24 09:30", "Volatility spike detected -- VIX +23%"),
+            (C.YELLOW, "03/23 14:15", "Model weight shift: Neural surpassed Prophet"),
+            (C.CYAN, "03/22 10:00", "Trend reversal signal on BTC-USD (bear -> bull)"),
+            (C.YELLOW, "03/21 16:30", "Correlation breakdown: AAPL / SPY divergence"),
+            (C.GREEN, "03/20 11:45", "Low-volatility regime entered -- reducing position sizes"),
+        ]
+        for i, (color, ts, msg) in enumerate(demo_alerts):
+            if i >= len(self._regime_labels):
+                break
+            dot, ts_label, msg_label = self._regime_labels[i]
+            dot.set_color(color)
+            ts_label.setText(ts)
+            msg_label.setText(msg)
 
     def update_from_tracker(self, stats: dict, weights: dict):
         """Update from live PerformanceTracker data."""

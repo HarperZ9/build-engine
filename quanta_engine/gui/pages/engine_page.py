@@ -433,11 +433,15 @@ class EngineControlPage(QWidget):
         self._log_text.setTextCursor(cursor)
 
     def _on_cycle_result(self, result: dict):
-        """Forward cycle result to dashboard."""
+        """Forward cycle result to dashboard and trading page."""
         if self._main_window:
             dashboard = self._main_window.stack.widget(0)
             if hasattr(dashboard, "update_from_engine"):
                 dashboard.update_from_engine(result)
+
+            trading = self._main_window.stack.widget(1)
+            if hasattr(trading, "update_from_engine"):
+                trading.update_from_engine(result)
 
     def _on_error(self, msg: str):
         if self._main_window:
