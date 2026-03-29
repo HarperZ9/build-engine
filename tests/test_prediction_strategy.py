@@ -5,38 +5,37 @@ Covers strategy creation, signal generation with various data patterns
 (insufficient, trending up, trending down, flat), weight management,
 signal attribute validation, and retrain triggering.
 """
+
 from __future__ import annotations
 
-import time
-
 import numpy as np
-import pytest
-
 from quanta_finance.data import Candle, Signal
 
 from quanta_engine.config import EngineConfig
 from quanta_engine.model_trainer import ModelTrainer
 from quanta_engine.prediction_strategy import PredictionStrategy
 
-
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
+
 
 def _make_candles(prices: list[float], symbol: str = "TEST") -> list[Candle]:
     """Build Candle objects from a list of close prices."""
     candles = []
     base_ts = 1_700_000_000.0
     for i, price in enumerate(prices):
-        candles.append(Candle(
-            timestamp=base_ts + i * 86_400,
-            open=price * 0.999,
-            high=price * 1.01,
-            low=price * 0.99,
-            close=price,
-            volume=1_000_000.0,
-            symbol=symbol,
-        ))
+        candles.append(
+            Candle(
+                timestamp=base_ts + i * 86_400,
+                open=price * 0.999,
+                high=price * 1.01,
+                low=price * 0.99,
+                close=price,
+                volume=1_000_000.0,
+                symbol=symbol,
+            )
+        )
     return candles
 
 
@@ -78,6 +77,7 @@ def _low_confidence_strategy() -> PredictionStrategy:
 # Construction
 # ---------------------------------------------------------------------------
 
+
 class TestPredictionStrategyCreation:
     def test_default_creation(self):
         strategy = PredictionStrategy()
@@ -106,6 +106,7 @@ class TestPredictionStrategyCreation:
 # Insufficient data
 # ---------------------------------------------------------------------------
 
+
 class TestInsufficientData:
     def test_fewer_than_50_candles_returns_empty(self):
         strategy = PredictionStrategy()
@@ -128,6 +129,7 @@ class TestInsufficientData:
 # ---------------------------------------------------------------------------
 # Signal generation with trending data
 # ---------------------------------------------------------------------------
+
 
 class TestTrendingSignals:
     def test_trending_up_produces_buy(self):
@@ -164,6 +166,7 @@ class TestTrendingSignals:
 # ---------------------------------------------------------------------------
 # Signal attributes
 # ---------------------------------------------------------------------------
+
 
 class TestSignalAttributes:
     def test_signal_is_signal_instance(self):
@@ -228,6 +231,7 @@ class TestSignalAttributes:
 # Weight management
 # ---------------------------------------------------------------------------
 
+
 class TestWeightManagement:
     def test_set_model_weights(self):
         strategy = PredictionStrategy()
@@ -248,6 +252,7 @@ class TestWeightManagement:
 # ---------------------------------------------------------------------------
 # Retrain behavior
 # ---------------------------------------------------------------------------
+
 
 class TestRetrainBehavior:
     def test_first_call_triggers_training(self):

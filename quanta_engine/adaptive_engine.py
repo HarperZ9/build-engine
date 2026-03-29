@@ -15,6 +15,7 @@ The feedback loop::
 Each *cycle* fetches data, generates predictions, executes trades, and
 feeds the results back to adjust model weights.
 """
+
 from __future__ import annotations
 
 import logging
@@ -151,11 +152,12 @@ class AdaptiveEngine:
         lookback = self._lookback
         try:
             from quanta_finance.market_data import fetch_yahoo
+
             candles = fetch_yahoo(symbol, period="6mo", interval="1d")
             if candles:
                 self.trader.history[symbol] = candles
                 return candles[-lookback:]
-        except Exception:
+        except (ConnectionError, TimeoutError, OSError):
             pass
         # Fallback to cached history
         cached = self.trader.history.get(symbol, [])

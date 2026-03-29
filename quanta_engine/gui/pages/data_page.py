@@ -6,19 +6,31 @@ inspect data statistics, and export to CSV.
 """
 
 import random
-import time
 
-from PyQt6.QtWidgets import (
-    QWidget, QVBoxLayout, QHBoxLayout, QLabel, QPushButton,
-    QScrollArea, QComboBox, QLineEdit, QFileDialog,
-    QSizePolicy, QGridLayout, QFrame,
-)
-from PyQt6.QtCore import Qt, QThread, pyqtSignal, QRectF, QPointF
+from PyQt6.QtCore import QPointF, QRectF, Qt, QThread, pyqtSignal
 from PyQt6.QtGui import (
-    QPainter, QPen, QColor, QBrush, QFont, QLinearGradient, QPolygonF,
+    QBrush,
+    QColor,
+    QFont,
+    QLinearGradient,
+    QPainter,
+    QPen,
+    QPolygonF,
+)
+from PyQt6.QtWidgets import (
+    QComboBox,
+    QFileDialog,
+    QGridLayout,
+    QHBoxLayout,
+    QLabel,
+    QLineEdit,
+    QPushButton,
+    QScrollArea,
+    QVBoxLayout,
+    QWidget,
 )
 
-from quanta_engine.gui.app import C, Card, Heading, Stat, StatusDot
+from quanta_engine.gui.app import C, Card, Heading
 
 
 class PriceChartWidget(QWidget):
@@ -33,8 +45,7 @@ class PriceChartWidget(QWidget):
         self._lows = []
         self._symbol = ""
 
-    def set_data(self, closes: list, highs: list = None, lows: list = None,
-                 symbol: str = ""):
+    def set_data(self, closes: list, highs: list = None, lows: list = None, symbol: str = ""):
         self._closes = closes
         self._highs = highs or []
         self._lows = lows or []
@@ -45,8 +56,7 @@ class PriceChartWidget(QWidget):
         if len(self._closes) < 2:
             p = QPainter(self)
             p.setPen(QColor(C.TEXT3))
-            p.drawText(self.rect(), Qt.AlignmentFlag.AlignCenter,
-                       "Fetch data to see price chart")
+            p.drawText(self.rect(), Qt.AlignmentFlag.AlignCenter, "Fetch data to see price chart")
             p.end()
             return
 
@@ -172,6 +182,7 @@ class FetchWorker(QThread):
             if self._source == "Yahoo Finance":
                 try:
                     from quanta_finance.market_data import fetch_yahoo
+
                     candles = fetch_yahoo(self._symbol, period="6mo", interval="1d")
                     if candles:
                         closes = [c.close for c in candles]
@@ -179,15 +190,17 @@ class FetchWorker(QThread):
                         lows = [c.low for c in candles]
                         volumes = [getattr(c, "volume", 0) for c in candles]
 
-                        self.data_ready.emit({
-                            "symbol": self._symbol,
-                            "closes": closes,
-                            "highs": highs,
-                            "lows": lows,
-                            "volumes": volumes,
-                            "candle_count": len(candles),
-                            "source": self._source,
-                        })
+                        self.data_ready.emit(
+                            {
+                                "symbol": self._symbol,
+                                "closes": closes,
+                                "highs": highs,
+                                "lows": lows,
+                                "volumes": volumes,
+                                "candle_count": len(candles),
+                                "source": self._source,
+                            }
+                        )
                         return
                 except ImportError:
                     pass
@@ -202,7 +215,7 @@ class FetchWorker(QThread):
             volumes = []
             for _ in range(n):
                 change = random.gauss(0.0003, 0.018)
-                price *= (1 + change)
+                price *= 1 + change
                 h = price * (1 + abs(random.gauss(0, 0.008)))
                 lo = price * (1 - abs(random.gauss(0, 0.008)))
                 vol = int(random.gauss(5_000_000, 2_000_000))
@@ -211,15 +224,17 @@ class FetchWorker(QThread):
                 lows.append(lo)
                 volumes.append(max(vol, 100_000))
 
-            self.data_ready.emit({
-                "symbol": self._symbol,
-                "closes": closes,
-                "highs": highs,
-                "lows": lows,
-                "volumes": volumes,
-                "candle_count": n,
-                "source": f"{self._source} (synthetic)",
-            })
+            self.data_ready.emit(
+                {
+                    "symbol": self._symbol,
+                    "closes": closes,
+                    "highs": highs,
+                    "lows": lows,
+                    "volumes": volumes,
+                    "candle_count": n,
+                    "source": f"{self._source} (synthetic)",
+                }
+            )
 
         except Exception as exc:
             self.error.emit(str(exc))
@@ -400,11 +415,10 @@ class DataPage(QWidget):
 
         # Volatility
         if len(closes) > 1:
-            returns = [(closes[i] - closes[i - 1]) / closes[i - 1]
-                       for i in range(1, len(closes))]
+            returns = [(closes[i] - closes[i - 1]) / closes[i - 1] for i in range(1, len(closes))]
             avg_ret = sum(returns) / len(returns)
             variance = sum((r - avg_ret) ** 2 for r in returns) / (len(returns) - 1)
-            vol = variance ** 0.5 * (252 ** 0.5) * 100
+            vol = variance**0.5 * (252**0.5) * 100
             self._info_labels["Volatility"].setText(f"{vol:.1f}%")
 
         self._btn_save.setEnabled(True)
@@ -461,8 +475,7 @@ class DataPage(QWidget):
 
         symbol = self._current_data.get("symbol", "data")
         path, _ = QFileDialog.getSaveFileName(
-            self, "Save CSV", f"{symbol}_data.csv",
-            "CSV Files (*.csv);;All Files (*)"
+            self, "Save CSV", f"{symbol}_data.csv", "CSV Files (*.csv);;All Files (*)"
         )
         if not path:
             return
