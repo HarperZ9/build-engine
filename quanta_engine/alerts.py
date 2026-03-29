@@ -15,16 +15,17 @@ Delivers alerts via:
 - Structured JSONL log file
 - Optional webhook (POST to URL)
 """
+
 from __future__ import annotations
 
 import json
 import logging
 import urllib.request
+from collections.abc import Callable
 from dataclasses import dataclass, field
 from datetime import datetime, timedelta
 from enum import Enum
 from pathlib import Path
-from typing import Callable, Optional
 
 import numpy as np
 
@@ -34,6 +35,7 @@ logger = logging.getLogger(__name__)
 # ---------------------------------------------------------------------------
 # Enums
 # ---------------------------------------------------------------------------
+
 
 class AlertLevel(Enum):
     """Severity of an alert."""
@@ -57,6 +59,7 @@ class AlertType(Enum):
 # ---------------------------------------------------------------------------
 # Data classes
 # ---------------------------------------------------------------------------
+
 
 @dataclass
 class Alert:
@@ -119,7 +122,7 @@ class AlertConfig:
     trend_fast_period: int = 10
     trend_slow_period: int = 30
     log_path: Path = Path.home() / ".quanta-engine" / "alerts.jsonl"
-    webhook_url: Optional[str] = None
+    webhook_url: str | None = None
     max_alerts_per_hour: int = 10
     dedup_window_seconds: int = 300  # 5 minutes
 
@@ -127,6 +130,7 @@ class AlertConfig:
 # ---------------------------------------------------------------------------
 # Regime detector
 # ---------------------------------------------------------------------------
+
 
 class RegimeDetector:
     """Detects market regime changes from price/prediction data.
@@ -142,7 +146,7 @@ class RegimeDetector:
 
     # -- trend ---------------------------------------------------------------
 
-    def check_trend_reversal(self, prices: np.ndarray) -> Optional[Alert]:
+    def check_trend_reversal(self, prices: np.ndarray) -> Alert | None:
         """Detect MA crossover indicating trend change.
 
         Compares the fast and slow simple moving averages at the last
@@ -211,7 +215,7 @@ class RegimeDetector:
 
     # -- volatility ----------------------------------------------------------
 
-    def check_volatility_spike(self, returns: np.ndarray) -> Optional[Alert]:
+    def check_volatility_spike(self, returns: np.ndarray) -> Alert | None:
         """Detect sudden volatility expansion.
 
         Compares the 5-day realized volatility against the 30-day
@@ -238,10 +242,7 @@ class RegimeDetector:
         ratio = recent_vol / historical_vol
 
         if ratio > self.config.volatility_threshold:
-            level = (
-                AlertLevel.CRITICAL if ratio > self.config.volatility_threshold * 1.5
-                else AlertLevel.WARNING
-            )
+            level = AlertLevel.CRITICAL if ratio > self.config.volatility_threshold * 1.5 else AlertLevel.WARNING
             return Alert(
                 timestamp=datetime.now(),
                 alert_type=AlertType.VOLATILITY_SPIKE,
@@ -263,7 +264,7 @@ class RegimeDetector:
         self,
         predictions: list[str],
         actuals: list[str],
-    ) -> Optional[Alert]:
+    ) -> Alert | None:
         """Detect model accuracy degradation.
 
         Computes hit rate over the most recent ``accuracy_window``
@@ -292,18 +293,12 @@ class RegimeDetector:
         accuracy = hits / window
 
         if accuracy < self.config.accuracy_threshold:
-            level = (
-                AlertLevel.CRITICAL if accuracy < self.config.accuracy_threshold * 0.5
-                else AlertLevel.WARNING
-            )
+            level = AlertLevel.CRITICAL if accuracy < self.config.accuracy_threshold * 0.5 else AlertLevel.WARNING
             return Alert(
                 timestamp=datetime.now(),
                 alert_type=AlertType.ACCURACY_DROP,
                 level=level,
-                message=(
-                    f"Model accuracy dropped to {accuracy:.1%} "
-                    f"(threshold: {self.config.accuracy_threshold:.1%})"
-                ),
+                message=(f"Model accuracy dropped to {accuracy:.1%} (threshold: {self.config.accuracy_threshold:.1%})"),
                 details={
                     "accuracy": accuracy,
                     "threshold": self.config.accuracy_threshold,
@@ -320,7 +315,7 @@ class RegimeDetector:
         self,
         current_weights: dict[str, float],
         previous_weights: dict[str, float],
-    ) -> Optional[Alert]:
+    ) -> Alert | None:
         """Detect sudden ensemble weight redistribution.
 
         Fires when any model's weight changes by more than
@@ -375,7 +370,7 @@ class RegimeDetector:
 
     # -- drawdown ------------------------------------------------------------
 
-    def check_drawdown(self, equity_curve: np.ndarray) -> Optional[Alert]:
+    def check_drawdown(self, equity_curve: np.ndarray) -> Alert | None:
         """Detect significant drawdown from peak equity.
 
         Parameters
@@ -398,10 +393,7 @@ class RegimeDetector:
         drawdown = (peak - current) / peak
 
         if drawdown > self.config.drawdown_threshold:
-            level = (
-                AlertLevel.CRITICAL if drawdown > self.config.drawdown_threshold * 2
-                else AlertLevel.WARNING
-            )
+            level = AlertLevel.CRITICAL if drawdown > self.config.drawdown_threshold * 2 else AlertLevel.WARNING
             return Alert(
                 timestamp=datetime.now(),
                 alert_type=AlertType.DRAWDOWN,
@@ -421,6 +413,7 @@ class RegimeDetector:
 # ---------------------------------------------------------------------------
 # Alert manager
 # ---------------------------------------------------------------------------
+
 
 class AlertManager:
     """Manages alert delivery, deduplication, and rate limiting.
@@ -475,7 +468,7 @@ class AlertManager:
         """
         fired: list[Alert] = []
 
-        checks: list[Optional[Alert]] = []
+        checks: list[Alert | None] = []
 
         if prices is not None:
             checks.append(self._detector.check_trend_reversal(prices))
@@ -523,7 +516,8 @@ class AlertManager:
                 break
             if past.alert_type == alert.alert_type:
                 logger.debug(
-                    "Duplicate suppressed for %s", alert.alert_type.value,
+                    "Duplicate suppressed for %s",
+                    alert.alert_type.value,
                 )
                 return False
 
@@ -569,7 +563,7 @@ class AlertManager:
                 method="POST",
             )
             urllib.request.urlopen(req, timeout=5)
-        except Exception as exc:
+        except (ConnectionError, TimeoutError, OSError) as exc:
             logger.error("Webhook delivery failed: %s", exc)
 
     # -- history access ------------------------------------------------------

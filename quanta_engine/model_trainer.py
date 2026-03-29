@@ -5,10 +5,10 @@ Wraps quanta_oracle models (ARIMA, Prophet, SimpleForecaster) behind a
 uniform train/predict interface so the rest of the engine never touches
 model internals directly.
 """
+
 from __future__ import annotations
 
 import logging
-from typing import Optional
 
 import numpy as np
 
@@ -29,8 +29,8 @@ class ModelTrainer:
 
     def __init__(self, config: EngineConfig | None = None) -> None:
         self.config = config or EngineConfig()
-        self.fitted_models: dict = {}   # name -> fitted model object
-        self._last_series: Optional[np.ndarray] = None
+        self.fitted_models: dict = {}  # name -> fitted model object
+        self._last_series: np.ndarray | None = None
 
     # ------------------------------------------------------------------
     # Training
@@ -75,7 +75,7 @@ class ModelTrainer:
                 else:
                     logger.warning("Unknown model name: %s", model_name)
 
-            except Exception as exc:
+            except (ValueError, RuntimeError) as exc:
                 logger.warning("Failed to train %s: %s", model_name, exc)
 
     # ------------------------------------------------------------------
@@ -109,7 +109,9 @@ class ModelTrainer:
 
                 elif name == "prophet":
                     t_future = np.arange(
-                        len(series), len(series) + horizon, dtype=float,
+                        len(series),
+                        len(series) + horizon,
+                        dtype=float,
                     )
                     result = model.predict(t_future)
                     predictions["prophet"] = result["yhat"]
@@ -117,7 +119,7 @@ class ModelTrainer:
                 elif name == "neural":
                     predictions["neural"] = model.predict(series[-30:])
 
-            except Exception as exc:
+            except (ValueError, RuntimeError) as exc:
                 logger.debug("Predict failed for %s: %s", name, exc)
 
         return predictions
@@ -128,10 +130,7 @@ class ModelTrainer:
 
     def get_model_info(self) -> dict[str, str]:
         """Return ``{model_name: class_name}`` for all fitted models."""
-        return {
-            name: type(model).__name__
-            for name, model in self.fitted_models.items()
-        }
+        return {name: type(model).__name__ for name, model in self.fitted_models.items()}
 
     def has_models(self) -> bool:
         """True if at least one model has been fitted."""

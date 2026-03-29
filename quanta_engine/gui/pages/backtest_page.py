@@ -6,20 +6,32 @@ equity curve, trade log, and key performance metrics.
 """
 
 import random
-from collections import deque
 
-from PyQt6.QtWidgets import (
-    QWidget, QVBoxLayout, QHBoxLayout, QLabel, QPushButton,
-    QScrollArea, QComboBox, QSpinBox, QLineEdit,
-    QSizePolicy, QGridLayout, QFrame, QTextEdit,
-)
-from PyQt6.QtCore import Qt, QThread, pyqtSignal, QRectF, QPointF
+from PyQt6.QtCore import QPointF, QRectF, Qt, QThread, pyqtSignal
 from PyQt6.QtGui import (
-    QPainter, QPen, QColor, QBrush, QFont, QLinearGradient,
-    QPolygonF, QTextCursor,
+    QBrush,
+    QColor,
+    QFont,
+    QLinearGradient,
+    QPainter,
+    QPen,
+    QPolygonF,
+    QTextCursor,
+)
+from PyQt6.QtWidgets import (
+    QComboBox,
+    QHBoxLayout,
+    QLabel,
+    QLineEdit,
+    QPushButton,
+    QScrollArea,
+    QSpinBox,
+    QTextEdit,
+    QVBoxLayout,
+    QWidget,
 )
 
-from quanta_engine.gui.app import C, Card, Heading, Stat, StatusDot
+from quanta_engine.gui.app import C, Card, Heading, Stat
 
 
 class BacktestEquityChart(QWidget):
@@ -41,8 +53,7 @@ class BacktestEquityChart(QWidget):
         if len(self._data) < 2:
             p = QPainter(self)
             p.setPen(QColor(C.TEXT3))
-            p.drawText(self.rect(), Qt.AlignmentFlag.AlignCenter,
-                       "Run a backtest to see results")
+            p.drawText(self.rect(), Qt.AlignmentFlag.AlignCenter, "Run a backtest to see results")
             p.end()
             return
 
@@ -88,8 +99,7 @@ class BacktestEquityChart(QWidget):
         if len(self._benchmark) >= 2:
             bench_pen = QPen(QColor(C.TEXT3), 1, Qt.PenStyle.DashLine)
             p.setPen(bench_pen)
-            bench_pts = [QPointF(x_pos(i, len(self._benchmark)), y_pos(v))
-                         for i, v in enumerate(self._benchmark)]
+            bench_pts = [QPointF(x_pos(i, len(self._benchmark)), y_pos(v)) for i, v in enumerate(self._benchmark)]
             for i in range(len(bench_pts) - 1):
                 p.drawLine(bench_pts[i], bench_pts[i + 1])
 
@@ -170,10 +180,13 @@ class BacktestWorker(QThread):
 
             try:
                 from quanta_finance.backtest import (
-                    BacktestConfig, Backtester, generate_sample_data,
+                    BacktestConfig,
+                    Backtester,
+                    generate_sample_data,
                 )
-                from quanta_engine.prediction_strategy import PredictionStrategy
+
                 from quanta_engine.config import EngineConfig
+                from quanta_engine.prediction_strategy import PredictionStrategy
 
                 engine_config = EngineConfig(
                     symbols=[self._config["symbol"]],
@@ -246,7 +259,7 @@ class BacktestWorker(QThread):
             for d in range(1, days + 1):
                 # Simulate daily return
                 daily_return = random.gauss(0.0005, 0.015)
-                capital *= (1 + daily_return)
+                capital *= 1 + daily_return
                 equity.append(capital)
 
                 # Simulate occasional trades
@@ -255,9 +268,7 @@ class BacktestWorker(QThread):
                     pnl = random.gauss(50, 200)
                     sym = self._config["symbol"]
                     price = 100 * (1 + random.gauss(0, 0.1))
-                    trades_log.append(
-                        f"Day {d}: {side} {sym} @ ${price:.2f}  P&L: ${pnl:+.2f}"
-                    )
+                    trades_log.append(f"Day {d}: {side} {sym} @ ${price:.2f}  P&L: ${pnl:+.2f}")
                     if pnl > 0:
                         wins += 1
                         total_profit += pnl
@@ -269,11 +280,10 @@ class BacktestWorker(QThread):
             total_return = (equity[-1] - equity[0]) / equity[0]
 
             # Sharpe
-            returns = [(equity[i] - equity[i - 1]) / equity[i - 1]
-                       for i in range(1, len(equity))]
+            returns = [(equity[i] - equity[i - 1]) / equity[i - 1] for i in range(1, len(equity))]
             avg_ret = sum(returns) / len(returns) if returns else 0
             std_ret = (sum((r - avg_ret) ** 2 for r in returns) / max(len(returns) - 1, 1)) ** 0.5
-            sharpe = (avg_ret / std_ret * (252 ** 0.5)) if std_ret > 0 else 0
+            sharpe = (avg_ret / std_ret * (252**0.5)) if std_ret > 0 else 0
 
             # Max drawdown
             peak = equity[0]
@@ -289,8 +299,8 @@ class BacktestWorker(QThread):
             # Benchmark (buy & hold)
             bench_start = self._config["capital"]
             benchmark = [bench_start]
-            for d in range(1, days + 1):
-                bench_start *= (1 + random.gauss(0.0003, 0.012))
+            for _d in range(1, days + 1):
+                bench_start *= 1 + random.gauss(0.0003, 0.012)
                 benchmark.append(bench_start)
 
             result_dict = {
@@ -350,13 +360,15 @@ class BacktestPage(QWidget):
         strat_col.setSpacing(4)
         strat_col.addWidget(QLabel("Strategy"))
         self._strategy_combo = QComboBox()
-        self._strategy_combo.addItems([
-            "Prediction (ARIMA+Prophet)",
-            "Momentum",
-            "Mean Reversion",
-            "Trend Following",
-            "Ensemble (All Models)",
-        ])
+        self._strategy_combo.addItems(
+            [
+                "Prediction (ARIMA+Prophet)",
+                "Momentum",
+                "Mean Reversion",
+                "Trend Following",
+                "Ensemble (All Models)",
+            ]
+        )
         strat_col.addWidget(self._strategy_combo)
         config_lay.addLayout(strat_col)
 
@@ -437,8 +449,7 @@ class BacktestPage(QWidget):
         self._trade_log.setFont(QFont("Cascadia Code", 10))
         self._trade_log.setFixedHeight(200)
         self._trade_log.setStyleSheet(
-            f"QTextEdit {{ background: #faf5f0; border: 1px solid {C.BORDER}; "
-            f"border-radius: 8px; padding: 10px; }}"
+            f"QTextEdit {{ background: #faf5f0; border: 1px solid {C.BORDER}; border-radius: 8px; padding: 10px; }}"
         )
         self._trade_log.setPlaceholderText("Trade log will appear here after backtest...")
         log_lay.addWidget(self._trade_log)

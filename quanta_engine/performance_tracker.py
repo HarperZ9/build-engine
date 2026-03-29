@@ -6,10 +6,11 @@ direction / magnitude.  When actual outcomes become available the tracker
 evaluates correctness and recalculates per-model weights so that more
 accurate models get heavier influence in the ensemble.
 """
+
 from __future__ import annotations
 
 import time
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 
 from quanta_engine.config import EngineConfig
 
@@ -20,7 +21,7 @@ class PredictionRecord:
 
     timestamp: float
     model_name: str
-    predicted_direction: str   # "up", "down", "flat"
+    predicted_direction: str  # "up", "down", "flat"
     predicted_magnitude: float
     symbol: str = ""
     predicted_price: float = 0.0
@@ -90,15 +91,17 @@ class PerformanceTracker:
         else:
             direction = "flat"
 
-        self.records.append(PredictionRecord(
-            timestamp=timestamp,
-            model_name=model_name,
-            predicted_direction=direction,
-            predicted_magnitude=abs(delta),
-            symbol=symbol,
-            predicted_price=predicted_price,
-            current_price=current_price,
-        ))
+        self.records.append(
+            PredictionRecord(
+                timestamp=timestamp,
+                model_name=model_name,
+                predicted_direction=direction,
+                predicted_magnitude=abs(delta),
+                symbol=symbol,
+                predicted_price=predicted_price,
+                current_price=current_price,
+            )
+        )
 
     # ------------------------------------------------------------------
     # Evaluation
@@ -134,10 +137,7 @@ class PerformanceTracker:
             if actual_price == 0:
                 continue
 
-            actual_delta = (
-                (actual_price - record.current_price) / record.current_price
-                if record.current_price else 0.0
-            )
+            actual_delta = (actual_price - record.current_price) / record.current_price if record.current_price else 0.0
 
             if actual_delta > threshold:
                 record.actual_direction = "up"
@@ -185,7 +185,7 @@ class PerformanceTracker:
                 continue
             accuracy = sum(1 for r in recs if r.correct) / len(recs)
             # Squared accuracy so better models dominate
-            weights[name] = max(accuracy ** 2, 0.01)
+            weights[name] = max(accuracy**2, 0.01)
 
         return weights
 

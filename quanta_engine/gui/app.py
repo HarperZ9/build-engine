@@ -7,44 +7,54 @@ navigation, page transitions, and the shared Calibrate Pro visual framework.
 
 import logging
 import sys
-from typing import Optional
 
 logger = logging.getLogger(__name__)
 
-from PyQt6.QtWidgets import (
-    QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout,
-    QLabel, QPushButton, QFrame, QStackedWidget, QMenuBar, QMenu,
-    QStatusBar, QMessageBox, QFileDialog, QScrollArea,
-    QSizePolicy, QGridLayout, QGroupBox, QProgressBar,
-    QGraphicsDropShadowEffect, QGraphicsOpacityEffect,
-    QLineEdit, QComboBox, QCheckBox, QSpinBox, QSlider,
-    QTextEdit,
-)
 from PyQt6.QtCore import (
-    Qt, QSize, QTimer, pyqtSignal, QSettings,
-    QPropertyAnimation, QEasingCurve, QPoint,
+    QEasingCurve,
+    QPointF,
+    QPropertyAnimation,
+    QRectF,
+    QSettings,
+    Qt,
 )
 from PyQt6.QtGui import (
-    QAction, QFont, QColor, QIcon, QPixmap, QPainter, QPen,
-    QLinearGradient, QPolygonF, QShortcut, QKeySequence,
-    QBrush,
+    QAction,
+    QColor,
+    QIcon,
+    QKeySequence,
+    QPainter,
+    QPen,
+    QPixmap,
+    QShortcut,
 )
-from PyQt6.QtCore import QPointF, QRectF
-
-from quanta_ui.theme import C as _BaseC, STYLE, create_stylesheet
-from quanta_ui.widgets import Card, StatusDot, Heading, Stat, NavButton, Sidebar, ToastNotification
+from PyQt6.QtWidgets import (
+    QFileDialog,
+    QGraphicsOpacityEffect,
+    QHBoxLayout,
+    QLabel,
+    QMainWindow,
+    QMessageBox,
+    QStackedWidget,
+    QVBoxLayout,
+    QWidget,
+)
+from quanta_ui.theme import STYLE
+from quanta_ui.theme import C as _BaseC
+from quanta_ui.widgets import Heading, Sidebar, StatusDot, ToastNotification
 
 
 class C(_BaseC):
     """Trading-focused color overrides on the shared pastel theme."""
-    GREEN =     "#4ade80"       # Profit green
-    GREEN_BG =  "#dcfce7"       # Light green background
-    GREEN_MUT = "#92ad7e"       # Soft sage
-    RED =       "#f87171"       # Loss red
-    RED_BG =    "#fee2e2"       # Light red background
-    RED_MUT =   "#d08888"       # Soft coral
-    CYAN =      "#38bdf8"       # Prediction blue
-    CYAN_MUT =  "#95b3ba"       # Powder blue
+
+    GREEN = "#4ade80"  # Profit green
+    GREEN_BG = "#dcfce7"  # Light green background
+    GREEN_MUT = "#92ad7e"  # Soft sage
+    RED = "#f87171"  # Loss red
+    RED_BG = "#fee2e2"  # Light red background
+    RED_MUT = "#d08888"  # Soft coral
+    CYAN = "#38bdf8"  # Prediction blue
+    CYAN_MUT = "#95b3ba"  # Powder blue
 
 
 APP_NAME = "Quanta Engine"
@@ -52,9 +62,8 @@ APP_VERSION = "1.0.0"
 APP_ORG = "Quanta Universe"
 
 
-# =============================================================================
-# Application Icon -- candlestick chart with prediction line
-# =============================================================================
+# Application Icon
+
 
 def make_app_icon() -> QIcon:
     """
@@ -72,7 +81,7 @@ def make_app_icon() -> QIcon:
         p.setRenderHint(QPainter.RenderHint.Antialiasing)
 
         s = size
-        pad = s * 0.12
+        s * 0.12
 
         # Background circle
         p.setPen(Qt.PenStyle.NoPen)
@@ -114,7 +123,8 @@ def make_app_icon() -> QIcon:
             body_h = max(abs(c_y - o_y), wick_w * 1.5)
             p.drawRoundedRect(
                 QRectF(cx - bar_w, body_top, bar_w * 2, body_h),
-                max(1, s * 0.02), max(1, s * 0.02),
+                max(1, s * 0.02),
+                max(1, s * 0.02),
             )
 
         # Prediction line (dashed, cyan)
@@ -143,9 +153,8 @@ def make_app_icon() -> QIcon:
     return icon
 
 
-# =============================================================================
 # Placeholder Page (fallback for unbuilt pages)
-# =============================================================================
+
 
 class PlaceholderPage(QWidget):
     def __init__(self, title: str, parent=None):
@@ -161,9 +170,7 @@ class PlaceholderPage(QWidget):
         layout.addStretch()
 
 
-# =============================================================================
 # Main Window
-# =============================================================================
 
 PAGE_NAMES = [
     "Dashboard",
@@ -176,8 +183,13 @@ PAGE_NAMES = [
 ]
 
 PAGE_SHORTCUTS = [
-    "Ctrl+1", "Ctrl+2", "Ctrl+3", "Ctrl+4",
-    "Ctrl+5", "Ctrl+6", "Ctrl+7",
+    "Ctrl+1",
+    "Ctrl+2",
+    "Ctrl+3",
+    "Ctrl+4",
+    "Ctrl+5",
+    "Ctrl+6",
+    "Ctrl+7",
 ]
 
 PAGE_MENU_NAMES = [
@@ -229,56 +241,33 @@ class QuantaEngineWindow(QMainWindow):
 
         # File
         file_menu = mb.addMenu("&File")
-        file_menu.addAction(
-            QAction("&New Session", self, shortcut="Ctrl+N",
-                    triggered=self._new_session)
-        )
-        file_menu.addAction(
-            QAction("&Export Report...", self, shortcut="Ctrl+E",
-                    triggered=self._export_report)
-        )
+        file_menu.addAction(QAction("&New Session", self, shortcut="Ctrl+N", triggered=self._new_session))
+        file_menu.addAction(QAction("&Export Report...", self, shortcut="Ctrl+E", triggered=self._export_report))
         file_menu.addSeparator()
-        file_menu.addAction(
-            QAction("E&xit", self, shortcut="Alt+F4",
-                    triggered=self.close)
-        )
+        file_menu.addAction(QAction("E&xit", self, shortcut="Alt+F4", triggered=self.close))
 
         # View -- page navigation shortcuts
         view = mb.addMenu("&View")
         for i, (name, sc) in enumerate(zip(PAGE_MENU_NAMES, PAGE_SHORTCUTS)):
             act = QAction(name, self)
             act.setShortcut(QKeySequence(sc))
-            act.triggered.connect(
-                lambda checked, idx=i: self._shortcut_switch_page(idx)
-            )
+            act.triggered.connect(lambda checked, idx=i: self._shortcut_switch_page(idx))
             view.addAction(act)
         view.addSeparator()
-        view.addAction(
-            QAction("&Refresh", self, shortcut="F5",
-                    triggered=self._refresh_current)
-        )
+        view.addAction(QAction("&Refresh", self, shortcut="F5", triggered=self._refresh_current))
 
         # Engine
         engine_menu = mb.addMenu("En&gine")
-        engine_menu.addAction(
-            QAction("&Start Engine", self, shortcut="Ctrl+R",
-                    triggered=self._start_engine_menu)
-        )
-        engine_menu.addAction(
-            QAction("S&top Engine", self, shortcut="Ctrl+T",
-                    triggered=self._stop_engine_menu)
-        )
+        engine_menu.addAction(QAction("&Start Engine", self, shortcut="Ctrl+R", triggered=self._start_engine_menu))
+        engine_menu.addAction(QAction("S&top Engine", self, shortcut="Ctrl+T", triggered=self._stop_engine_menu))
         engine_menu.addSeparator()
         engine_menu.addAction(
-            QAction("Run &Backtest", self, shortcut="Ctrl+B",
-                    triggered=lambda: self._shortcut_switch_page(4))
+            QAction("Run &Backtest", self, shortcut="Ctrl+B", triggered=lambda: self._shortcut_switch_page(4))
         )
 
         # Help
         help_menu = mb.addMenu("&Help")
-        help_menu.addAction(
-            QAction("&About", self, triggered=self._about)
-        )
+        help_menu.addAction(QAction("&About", self, triggered=self._about))
 
     # --- Central Widget ---
 
@@ -300,56 +289,63 @@ class QuantaEngineWindow(QMainWindow):
         # Page 0: Dashboard
         try:
             from quanta_engine.gui.pages.dashboard import DashboardPage
+
             self.stack.addWidget(DashboardPage(self))
-        except Exception as e:
+        except (ImportError, AttributeError, TypeError) as e:
             logger.warning("Failed to load DashboardPage: %s", e)
             self.stack.addWidget(PlaceholderPage("Dashboard"))
 
         # Page 1: Trading
         try:
             from quanta_engine.gui.pages.trading_page import TradingPage
+
             self.stack.addWidget(TradingPage(self))
-        except Exception as e:
+        except (ImportError, AttributeError, TypeError) as e:
             logger.warning("Failed to load TradingPage: %s", e)
             self.stack.addWidget(PlaceholderPage("Trading"))
 
         # Page 2: Engine Control
         try:
             from quanta_engine.gui.pages.engine_page import EngineControlPage
+
             self.stack.addWidget(EngineControlPage(self))
-        except Exception as e:
+        except (ImportError, AttributeError, TypeError) as e:
             logger.warning("Failed to load EngineControlPage: %s", e)
             self.stack.addWidget(PlaceholderPage("Engine Control"))
 
         # Page 3: Performance
         try:
             from quanta_engine.gui.pages.performance_page import PerformancePage
+
             self.stack.addWidget(PerformancePage(self))
-        except Exception as e:
+        except (ImportError, AttributeError, TypeError) as e:
             logger.warning("Failed to load PerformancePage: %s", e)
             self.stack.addWidget(PlaceholderPage("Performance"))
 
         # Page 4: Backtest
         try:
             from quanta_engine.gui.pages.backtest_page import BacktestPage
+
             self.stack.addWidget(BacktestPage(self))
-        except Exception as e:
+        except (ImportError, AttributeError, TypeError) as e:
             logger.warning("Failed to load BacktestPage: %s", e)
             self.stack.addWidget(PlaceholderPage("Backtest"))
 
         # Page 5: Market Data
         try:
             from quanta_engine.gui.pages.data_page import DataPage
+
             self.stack.addWidget(DataPage(self))
-        except Exception as e:
+        except (ImportError, AttributeError, TypeError) as e:
             logger.warning("Failed to load DataPage: %s", e)
             self.stack.addWidget(PlaceholderPage("Market Data"))
 
         # Page 6: Settings
         try:
             from quanta_engine.gui.pages.settings_page import SettingsPage
+
             self.stack.addWidget(SettingsPage(self))
-        except Exception as e:
+        except (ImportError, AttributeError, TypeError) as e:
             logger.warning("Failed to load SettingsPage: %s", e)
             self.stack.addWidget(PlaceholderPage("Settings"))
 
@@ -401,7 +397,7 @@ class QuantaEngineWindow(QMainWindow):
                 anim.finished.connect(lambda: target.setGraphicsEffect(None))
                 self._page_anim = anim  # prevent GC
                 anim.start()
-            except Exception:
+            except (AttributeError, RuntimeError):
                 self.stack.setCurrentIndex(index)
         else:
             self.stack.setCurrentIndex(index)
@@ -425,8 +421,7 @@ class QuantaEngineWindow(QMainWindow):
 
     def _export_report(self):
         path, _ = QFileDialog.getSaveFileName(
-            self, "Export Report", "quanta_engine_report.txt",
-            "Text Files (*.txt);;CSV Files (*.csv);;All Files (*)"
+            self, "Export Report", "quanta_engine_report.txt", "Text Files (*.txt);;CSV Files (*.csv);;All Files (*)"
         )
         if path:
             self._status.setText(f"Report exported: {path}")
@@ -453,14 +448,15 @@ class QuantaEngineWindow(QMainWindow):
 
     def _about(self):
         QMessageBox.about(
-            self, f"About {APP_NAME}",
+            self,
+            f"About {APP_NAME}",
             f"<h2>{APP_NAME}</h2>"
             f"<p>Version {APP_VERSION}</p>"
             f"<p>Self-improving prediction and trading engine.</p>"
             f"<p>Integrates quanta-oracle forecasting models with<br>"
             f"quanta-finance execution for a complete feedback loop.</p>"
             f"<p>Models: ARIMA, Prophet, Neural Network</p>"
-            f"<p>&copy; 2024-2026 Quanta Universe</p>"
+            f"<p>&copy; 2024-2026 Quanta Universe</p>",
         )
 
     # --- Geometry Persistence ---
@@ -479,10 +475,9 @@ class QuantaEngineWindow(QMainWindow):
         event.accept()
 
 
-# =============================================================================
 # Entry Point
-# =============================================================================
 
 if __name__ == "__main__":
     from quanta_engine.gui import launch
+
     sys.exit(launch())

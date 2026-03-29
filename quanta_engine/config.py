@@ -4,6 +4,7 @@ Engine configuration with sensible defaults for prediction-and-trading.
 Covers symbol selection, risk management, model selection, and feedback-loop
 tuning knobs.
 """
+
 from __future__ import annotations
 
 from dataclasses import dataclass, field

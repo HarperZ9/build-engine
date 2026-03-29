@@ -5,25 +5,29 @@ Shows current position status, P&L breakdown, recent trade history,
 and buy/sell signal indicators powered by the adaptive engine.
 """
 
-import random
-import time
-
-from PyQt6.QtWidgets import (
-    QWidget, QVBoxLayout, QHBoxLayout, QLabel, QPushButton,
-    QScrollArea, QSizePolicy, QGridLayout, QFrame,
-    QHeaderView, QTableWidget, QTableWidgetItem,
-)
-from PyQt6.QtCore import Qt, QTimer, QRectF, QPointF
+from PyQt6.QtCore import QPointF, QRectF, Qt, QTimer
 from PyQt6.QtGui import (
-    QPainter, QPen, QColor, QBrush, QFont, QLinearGradient,
+    QColor,
+    QFont,
+    QPainter,
+)
+from PyQt6.QtWidgets import (
+    QGridLayout,
+    QHBoxLayout,
+    QHeaderView,
+    QLabel,
+    QPushButton,
+    QScrollArea,
+    QTableWidget,
+    QTableWidgetItem,
+    QVBoxLayout,
+    QWidget,
 )
 
-from quanta_engine.gui.app import C, Card, Heading, Stat, StatusDot
+from quanta_engine.gui.app import C, Card, Heading, Stat
 
-
-# ---------------------------------------------------------------
 # Signal Indicator Widget
-# ---------------------------------------------------------------
+
 
 class SignalIndicator(QWidget):
     """Visual buy/sell/flat signal gauge."""
@@ -32,8 +36,8 @@ class SignalIndicator(QWidget):
         super().__init__(parent)
         self.setFixedHeight(80)
         self.setMinimumWidth(200)
-        self._signal = "flat"    # "buy", "sell", "flat"
-        self._strength = 0.0    # 0.0 .. 1.0
+        self._signal = "flat"  # "buy", "sell", "flat"
+        self._strength = 0.0  # 0.0 .. 1.0
 
     def set_signal(self, signal: str, strength: float = 0.0):
         self._signal = signal
@@ -97,7 +101,8 @@ class SignalIndicator(QWidget):
             p.setBrush(color)
             p.drawRoundedRect(
                 QRectF(bar_x, bar_y, bar_w * self._strength, bar_h),
-                4, 4,
+                4,
+                4,
             )
 
         # Strength text
@@ -112,9 +117,8 @@ class SignalIndicator(QWidget):
         p.end()
 
 
-# ---------------------------------------------------------------
 # P&L Breakdown Widget
-# ---------------------------------------------------------------
+
 
 class PnlBreakdown(QWidget):
     """Colored P&L bar showing profit/loss distribution."""
@@ -154,15 +158,15 @@ class PnlBreakdown(QWidget):
             p.setBrush(QColor(C.RED))
             p.drawRoundedRect(
                 QRectF(w * win_frac, 8, w * (1 - win_frac), h - 16),
-                6, 6,
+                6,
+                6,
             )
 
         p.end()
 
 
-# ---------------------------------------------------------------
 # Trading Page
-# ---------------------------------------------------------------
+
 
 class TradingPage(QWidget):
     """Live trading view with position, P&L, history, and signals."""
@@ -181,9 +185,7 @@ class TradingPage(QWidget):
     def _build_ui(self):
         scroll = QScrollArea(self)
         scroll.setWidgetResizable(True)
-        scroll.setHorizontalScrollBarPolicy(
-            Qt.ScrollBarPolicy.ScrollBarAlwaysOff
-        )
+        scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
 
         container = QWidget()
         layout = QVBoxLayout(container)
@@ -192,9 +194,7 @@ class TradingPage(QWidget):
 
         layout.addWidget(Heading("Trading"))
 
-        # ---------------------------------------------------------
         # Row 1: Position Status + Signal Indicator
-        # ---------------------------------------------------------
         row1 = QHBoxLayout()
         row1.setSpacing(16)
 
@@ -207,9 +207,7 @@ class TradingPage(QWidget):
 
         pos_grid.addWidget(QLabel("Status:"), 0, 0, Qt.AlignmentFlag.AlignRight)
         self._position_label = QLabel("FLAT")
-        self._position_label.setStyleSheet(
-            f"font-size: 16px; font-weight: 700; color: {C.TEXT3};"
-        )
+        self._position_label.setStyleSheet(f"font-size: 16px; font-weight: 700; color: {C.TEXT3};")
         pos_grid.addWidget(self._position_label, 0, 1)
 
         pos_grid.addWidget(QLabel("Symbol:"), 1, 0, Qt.AlignmentFlag.AlignRight)
@@ -229,9 +227,7 @@ class TradingPage(QWidget):
 
         pos_grid.addWidget(QLabel("Unrealized P&L:"), 4, 0, Qt.AlignmentFlag.AlignRight)
         self._pos_pnl = QLabel("$0.00")
-        self._pos_pnl.setStyleSheet(
-            f"font-size: 14px; font-weight: 600; color: {C.TEXT2};"
-        )
+        self._pos_pnl.setStyleSheet(f"font-size: 14px; font-weight: 600; color: {C.TEXT2};")
         pos_grid.addWidget(self._pos_pnl, 4, 1)
 
         pos_lay.addLayout(pos_grid)
@@ -246,9 +242,7 @@ class TradingPage(QWidget):
         signal_lay.addWidget(self._signal_indicator)
 
         self._signal_details = QLabel("No active signal")
-        self._signal_details.setStyleSheet(
-            f"font-size: 11px; color: {C.TEXT2}; padding: 6px 0;"
-        )
+        self._signal_details.setStyleSheet(f"font-size: 11px; color: {C.TEXT2}; padding: 6px 0;")
         self._signal_details.setWordWrap(True)
         signal_lay.addWidget(self._signal_details)
         signal_lay.addStretch()
@@ -282,29 +276,27 @@ class TradingPage(QWidget):
 
         layout.addLayout(row1)
 
-        # ---------------------------------------------------------
         # Row 2: Trade History Table
-        # ---------------------------------------------------------
         card_history, history_lay = Card.with_layout()
         history_lay.addWidget(Heading("Trade History", level=2))
 
         self._trade_table = QTableWidget(0, 7)
-        self._trade_table.setHorizontalHeaderLabels([
-            "Time", "Symbol", "Direction", "Qty", "Entry", "Exit", "P&L",
-        ])
-        self._trade_table.horizontalHeader().setSectionResizeMode(
-            QHeaderView.ResizeMode.Stretch
+        self._trade_table.setHorizontalHeaderLabels(
+            [
+                "Time",
+                "Symbol",
+                "Direction",
+                "Qty",
+                "Entry",
+                "Exit",
+                "P&L",
+            ]
         )
+        self._trade_table.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
         self._trade_table.verticalHeader().setVisible(False)
-        self._trade_table.setEditTriggers(
-            QTableWidget.EditTrigger.NoEditTriggers
-        )
-        self._trade_table.setSelectionMode(
-            QTableWidget.SelectionMode.SingleSelection
-        )
-        self._trade_table.setSelectionBehavior(
-            QTableWidget.SelectionBehavior.SelectRows
-        )
+        self._trade_table.setEditTriggers(QTableWidget.EditTrigger.NoEditTriggers)
+        self._trade_table.setSelectionMode(QTableWidget.SelectionMode.SingleSelection)
+        self._trade_table.setSelectionBehavior(QTableWidget.SelectionBehavior.SelectRows)
         self._trade_table.setMinimumHeight(320)
         self._trade_table.setStyleSheet(
             f"QTableWidget {{ background: {C.SURFACE}; "
@@ -323,9 +315,7 @@ class TradingPage(QWidget):
         ctrl_row.setSpacing(8)
 
         self._trade_count_label = QLabel("0 trades")
-        self._trade_count_label.setStyleSheet(
-            f"font-size: 11px; color: {C.TEXT3};"
-        )
+        self._trade_count_label.setStyleSheet(f"font-size: 11px; color: {C.TEXT3};")
         ctrl_row.addWidget(self._trade_count_label)
         ctrl_row.addStretch()
 
@@ -344,9 +334,7 @@ class TradingPage(QWidget):
         outer.setContentsMargins(0, 0, 0, 0)
         outer.addWidget(scroll)
 
-    # ---------------------------------------------------------
     # Demo data
-    # ---------------------------------------------------------
 
     def _load_demo_data(self):
         """Populate the page with demo data for initial display."""
@@ -356,8 +344,7 @@ class TradingPage(QWidget):
         # Signal
         self._signal_indicator.set_signal("buy", 0.72)
         self._signal_details.setText(
-            "Ensemble prediction: +1.4% over 5 steps. "
-            "ARIMA (up), Prophet (up), Neural (flat)."
+            "Ensemble prediction: +1.4% over 5 steps. ARIMA (up), Prophet (up), Neural (flat)."
         )
 
         # P&L
@@ -400,18 +387,14 @@ class TradingPage(QWidget):
             color = C.TEXT3
 
         self._position_label.setText(status_upper)
-        self._position_label.setStyleSheet(
-            f"font-size: 16px; font-weight: 700; color: {color};"
-        )
+        self._position_label.setStyleSheet(f"font-size: 16px; font-weight: 700; color: {color};")
         self._pos_symbol.setText(symbol)
         self._pos_entry.setText(entry)
         self._pos_qty.setText(qty)
 
         pnl_color = C.GREEN if pnl.startswith("+") else C.RED
         self._pos_pnl.setText(pnl)
-        self._pos_pnl.setStyleSheet(
-            f"font-size: 14px; font-weight: 600; color: {pnl_color};"
-        )
+        self._pos_pnl.setStyleSheet(f"font-size: 14px; font-weight: 600; color: {pnl_color};")
 
     def _populate_trade_table(self, trades: list):
         """Fill the trade history table from a list of tuples."""
@@ -438,9 +421,7 @@ class TradingPage(QWidget):
 
         self._trade_count_label.setText(f"{len(trades)} trades")
 
-    # ---------------------------------------------------------
     # Live data integration
-    # ---------------------------------------------------------
 
     def update_from_engine(self, status: dict):
         """Update trading page from engine status dict."""
@@ -448,14 +429,10 @@ class TradingPage(QWidget):
         positions = status.get("positions", 0)
         if positions > 0:
             self._position_label.setText("ACTIVE")
-            self._position_label.setStyleSheet(
-                f"font-size: 16px; font-weight: 700; color: {C.GREEN};"
-            )
+            self._position_label.setStyleSheet(f"font-size: 16px; font-weight: 700; color: {C.GREEN};")
         else:
             self._position_label.setText("FLAT")
-            self._position_label.setStyleSheet(
-                f"font-size: 16px; font-weight: 700; color: {C.TEXT3};"
-            )
+            self._position_label.setStyleSheet(f"font-size: 16px; font-weight: 700; color: {C.TEXT3};")
 
     def update_signal(self, direction: str, strength: float, details: str):
         """Update the signal indicator from engine predictions."""
@@ -464,7 +441,7 @@ class TradingPage(QWidget):
 
     def add_trade(self, trade: dict):
         """Insert a trade at the top of the history table."""
-        row_count = self._trade_table.rowCount()
+        self._trade_table.rowCount()
         self._trade_table.insertRow(0)
 
         cols = [
@@ -497,9 +474,7 @@ class TradingPage(QWidget):
         while self._trade_table.rowCount() > 50:
             self._trade_table.removeRow(self._trade_table.rowCount() - 1)
 
-        self._trade_count_label.setText(
-            f"{self._trade_table.rowCount()} trades"
-        )
+        self._trade_count_label.setText(f"{self._trade_table.rowCount()} trades")
 
     def _refresh_data(self):
         """Refresh from live engine data if available."""

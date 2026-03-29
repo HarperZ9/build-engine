@@ -5,6 +5,7 @@ Covers model creation with default/custom configs, training individual and
 combined models, prediction output, introspection methods, and edge cases
 (unknown model names, insufficient data).
 """
+
 from __future__ import annotations
 
 import numpy as np
@@ -13,10 +14,10 @@ import pytest
 from quanta_engine.config import EngineConfig
 from quanta_engine.model_trainer import ModelTrainer
 
-
 # ---------------------------------------------------------------------------
 # Fixtures
 # ---------------------------------------------------------------------------
+
 
 @pytest.fixture
 def sin_series() -> np.ndarray:
@@ -34,6 +35,7 @@ def short_series() -> np.ndarray:
 # ---------------------------------------------------------------------------
 # Construction
 # ---------------------------------------------------------------------------
+
 
 class TestModelTrainerCreation:
     def test_default_config(self):
@@ -61,6 +63,7 @@ class TestModelTrainerCreation:
 # ---------------------------------------------------------------------------
 # Training individual models
 # ---------------------------------------------------------------------------
+
 
 class TestTrainIndividual:
     def test_train_arima(self, sin_series):
@@ -95,6 +98,7 @@ class TestTrainIndividual:
 # Training all models simultaneously
 # ---------------------------------------------------------------------------
 
+
 class TestTrainAll:
     def test_train_all_three(self, sin_series):
         cfg = EngineConfig(models=["arima", "prophet", "neural"], forecast_horizon=3)
@@ -114,6 +118,7 @@ class TestTrainAll:
 # ---------------------------------------------------------------------------
 # Predictions
 # ---------------------------------------------------------------------------
+
 
 class TestPredictions:
     def test_predict_all_returns_dict(self, sin_series):
@@ -157,6 +162,7 @@ class TestPredictions:
 # Introspection
 # ---------------------------------------------------------------------------
 
+
 class TestIntrospection:
     def test_get_model_info_arima(self, sin_series):
         cfg = EngineConfig(models=["arima"])
@@ -193,6 +199,7 @@ class TestIntrospection:
 # ---------------------------------------------------------------------------
 # Edge cases
 # ---------------------------------------------------------------------------
+
 
 class TestEdgeCases:
     def test_unknown_model_skipped(self, sin_series):

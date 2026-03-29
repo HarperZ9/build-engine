@@ -8,6 +8,7 @@ Files:
     - ``state.json``   -- model weights, accuracy history, config snapshot
     - ``trades.jsonl``  -- trade history (one JSON object per line, append-only)
 """
+
 from __future__ import annotations
 
 import json
@@ -102,7 +103,7 @@ class EngineState:
             tmp.write_text(json.dumps(state, indent=2), encoding="utf-8")
             tmp.replace(self._state_path)
             logger.debug("Engine state saved to %s", self._state_path)
-        except Exception as exc:
+        except OSError as exc:
             logger.error("Failed to save engine state: %s", exc)
             if tmp.exists():
                 tmp.unlink(missing_ok=True)
@@ -183,7 +184,7 @@ class EngineState:
 
         trades: list[dict] = []
         try:
-            with open(self._trades_path, "r", encoding="utf-8") as f:
+            with open(self._trades_path, encoding="utf-8") as f:
                 for line in f:
                     line = line.strip()
                     if not line:
@@ -219,7 +220,7 @@ class EngineState:
             return 0
         count = 0
         try:
-            with open(self._trades_path, "r", encoding="utf-8") as f:
+            with open(self._trades_path, encoding="utf-8") as f:
                 for line in f:
                     if line.strip():
                         count += 1

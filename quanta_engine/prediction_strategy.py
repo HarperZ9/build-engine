@@ -14,6 +14,7 @@ Pipeline per call to ``generate_signals``:
     4. Ensemble predictions with dynamic weights.
     5. Convert predicted direction to a buy / sell Signal.
 """
+
 from __future__ import annotations
 
 import time
@@ -25,7 +26,7 @@ from quanta_engine.config import EngineConfig
 from quanta_engine.model_trainer import ModelTrainer
 
 if TYPE_CHECKING:
-    from quanta_finance.data import Signal
+    pass
 
 
 class PredictionStrategy:
@@ -102,7 +103,8 @@ class PredictionStrategy:
 
         # -- Get predictions from each model ----------------------------------
         predictions = self.trainer.predict_all(
-            closes, self.config.forecast_horizon,
+            closes,
+            self.config.forecast_horizon,
         )
         if not predictions:
             return []
@@ -131,26 +133,30 @@ class PredictionStrategy:
 
         # -- Convert to Signal ------------------------------------------------
         if avg_direction > threshold and strength >= self.config.min_confidence:
-            return [Signal(
-                symbol=symbol,
-                side="buy",
-                strength=strength,
-                timestamp=timestamp,
-                target_price=current_price * (1 + avg_direction),
-                stop_loss=current_price * 0.97,
-                take_profit=current_price * (1 + avg_direction * 2),
-            )]
+            return [
+                Signal(
+                    symbol=symbol,
+                    side="buy",
+                    strength=strength,
+                    timestamp=timestamp,
+                    target_price=current_price * (1 + avg_direction),
+                    stop_loss=current_price * 0.97,
+                    take_profit=current_price * (1 + avg_direction * 2),
+                )
+            ]
 
         if avg_direction < -threshold and strength >= self.config.min_confidence:
-            return [Signal(
-                symbol=symbol,
-                side="sell",
-                strength=strength,
-                timestamp=timestamp,
-                target_price=current_price * (1 + avg_direction),
-                stop_loss=current_price * 1.03,
-                take_profit=current_price * (1 + avg_direction * 2),
-            )]
+            return [
+                Signal(
+                    symbol=symbol,
+                    side="sell",
+                    strength=strength,
+                    timestamp=timestamp,
+                    target_price=current_price * (1 + avg_direction),
+                    stop_loss=current_price * 1.03,
+                    take_profit=current_price * (1 + avg_direction * 2),
+                )
+            ]
 
         return []
 
