@@ -6,17 +6,26 @@ recent trades, model accuracy, and quick actions.
 """
 
 import random
-import time
 from collections import deque
 
-from PyQt6.QtWidgets import (
-    QWidget, QVBoxLayout, QHBoxLayout, QLabel, QPushButton,
-    QScrollArea, QSizePolicy, QGridLayout, QFrame,
-)
-from PyQt6.QtCore import Qt, QTimer, QRectF, QPointF
+from PyQt6.QtCore import QPointF, QRectF, Qt, QTimer
 from PyQt6.QtGui import (
-    QPainter, QPen, QColor, QLinearGradient, QBrush, QPolygonF,
+    QBrush,
+    QColor,
     QFont,
+    QLinearGradient,
+    QPainter,
+    QPen,
+    QPolygonF,
+)
+from PyQt6.QtWidgets import (
+    QGridLayout,
+    QHBoxLayout,
+    QLabel,
+    QPushButton,
+    QScrollArea,
+    QVBoxLayout,
+    QWidget,
 )
 
 from quanta_engine.gui.app import C, Card, Heading, Stat, StatusDot
@@ -162,7 +171,7 @@ class ModelAccuracyBars(QWidget):
         p.setRenderHint(QPainter.RenderHint.Antialiasing)
 
         w = self.width()
-        h = self.height()
+        self.height()
         label_w = 70
         bar_x = label_w + 10
         bar_max_w = w - bar_x - 60
@@ -406,7 +415,7 @@ class DashboardPage(QWidget):
         # Equity curve demo data
         base = 100_000
         equity_data = [base]
-        for i in range(99):
+        for _i in range(99):
             change = random.gauss(0.001, 0.008)
             base = base * (1 + change)
             equity_data.append(base)
@@ -419,17 +428,19 @@ class DashboardPage(QWidget):
         self._equity_stat.set_value(f"${final_equity:,.0f}", C.TEXT)
         self._cash_stat.set_value(f"${final_equity * 0.6:,.0f}", C.TEXT2)
         self._pnl_stat.set_value(
-            f"{'+'if pnl >= 0 else ''}${pnl:,.0f}",
+            f"{'+' if pnl >= 0 else ''}${pnl:,.0f}",
             pnl_color,
         )
         self._positions_stat.set_value("3", C.TEXT2)
 
         # Model accuracy demo
-        self._accuracy_bars.set_data({
-            "arima": 62,
-            "prophet": 55,
-            "neural": 48,
-        })
+        self._accuracy_bars.set_data(
+            {
+                "arima": 62,
+                "prophet": 55,
+                "neural": 48,
+            }
+        )
 
         # Demo trades
         demo_trades = [

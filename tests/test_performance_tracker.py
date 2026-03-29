@@ -5,6 +5,7 @@ Covers record creation, direction classification, evaluation correctness,
 model weight computation, per-model stats, overall accuracy, and the
 accuracy_window windowing behavior.
 """
+
 from __future__ import annotations
 
 import time
@@ -12,12 +13,12 @@ import time
 import pytest
 
 from quanta_engine.config import EngineConfig
-from quanta_engine.performance_tracker import PerformanceTracker, PredictionRecord
-
+from quanta_engine.performance_tracker import PerformanceTracker
 
 # ---------------------------------------------------------------------------
 # Construction
 # ---------------------------------------------------------------------------
+
 
 class TestTrackerCreation:
     def test_default_creation(self):
@@ -41,6 +42,7 @@ class TestTrackerCreation:
 # ---------------------------------------------------------------------------
 # Recording predictions
 # ---------------------------------------------------------------------------
+
 
 class TestRecordPrediction:
     def test_record_creates_entry(self):
@@ -103,6 +105,7 @@ class TestRecordPrediction:
 # ---------------------------------------------------------------------------
 # Evaluation
 # ---------------------------------------------------------------------------
+
 
 class TestEvaluatePast:
     def test_evaluate_marks_evaluated(self):
@@ -168,6 +171,7 @@ class TestEvaluatePast:
 # Model weights
 # ---------------------------------------------------------------------------
 
+
 class TestModelWeights:
     def test_default_weights_empty(self):
         tracker = PerformanceTracker()
@@ -229,6 +233,7 @@ class TestModelWeights:
 # Accuracy window
 # ---------------------------------------------------------------------------
 
+
 class TestAccuracyWindow:
     def test_window_limits_records(self):
         cfg = EngineConfig(accuracy_window=3)
@@ -250,6 +255,7 @@ class TestAccuracyWindow:
 # ---------------------------------------------------------------------------
 # Statistics
 # ---------------------------------------------------------------------------
+
 
 class TestStats:
     def test_get_stats_empty(self):
@@ -290,6 +296,7 @@ class TestStats:
 # ---------------------------------------------------------------------------
 # Overall accuracy
 # ---------------------------------------------------------------------------
+
 
 class TestOverallAccuracy:
     def test_no_evaluated_returns_zero(self):

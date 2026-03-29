@@ -5,11 +5,11 @@ Covers each detection method with synthetic data, AlertManager delivery
 pipeline, rate limiting, JSONL log writing, callback delivery, and
 deduplication.
 """
+
 from __future__ import annotations
 
 import json
 from datetime import datetime, timedelta
-from pathlib import Path
 
 import numpy as np
 import pytest
@@ -23,10 +23,10 @@ from quanta_engine.alerts import (
     RegimeDetector,
 )
 
-
 # ---------------------------------------------------------------------------
 # Alert dataclass
 # ---------------------------------------------------------------------------
+
 
 class TestAlert:
     def test_to_dict_roundtrip(self):
@@ -58,6 +58,7 @@ class TestAlert:
 # Trend reversal detection
 # ---------------------------------------------------------------------------
 
+
 class TestTrendReversal:
     def test_bullish_crossover(self):
         cfg = AlertConfig(trend_fast_period=3, trend_slow_period=5)
@@ -66,10 +67,23 @@ class TestTrendReversal:
         # Verified: at the second-to-last aligned step fast_ma=-0.40
         # and at the last step fast_ma=+2.27 -- that IS the cross.
         # Extend the data by one so the cross lands on the final pair.
-        prices = np.array([
-            20, 20, 18, 16, 14, 12,
-            10, 8, 6, 6, 12, 20,
-        ], dtype=float)
+        prices = np.array(
+            [
+                20,
+                20,
+                18,
+                16,
+                14,
+                12,
+                10,
+                8,
+                6,
+                6,
+                12,
+                20,
+            ],
+            dtype=float,
+        )
         alert = det.check_trend_reversal(prices)
         assert alert is not None
         assert alert.alert_type == AlertType.TREND_REVERSAL
@@ -79,10 +93,23 @@ class TestTrendReversal:
         cfg = AlertConfig(trend_fast_period=3, trend_slow_period=5)
         det = RegimeDetector(cfg)
         # Mirror of the bullish case: cross at the final aligned pair.
-        prices = np.array([
-            5, 5, 7, 9, 11, 13,
-            15, 17, 19, 19, 13, 7,
-        ], dtype=float)
+        prices = np.array(
+            [
+                5,
+                5,
+                7,
+                9,
+                11,
+                13,
+                15,
+                17,
+                19,
+                19,
+                13,
+                7,
+            ],
+            dtype=float,
+        )
         alert = det.check_trend_reversal(prices)
         assert alert is not None
         assert alert.alert_type == AlertType.TREND_REVERSAL
@@ -106,6 +133,7 @@ class TestTrendReversal:
 # ---------------------------------------------------------------------------
 # Volatility spike detection
 # ---------------------------------------------------------------------------
+
 
 class TestVolatilitySpike:
     def test_spike_detected(self):
@@ -157,6 +185,7 @@ class TestVolatilitySpike:
 # ---------------------------------------------------------------------------
 # Accuracy drop detection
 # ---------------------------------------------------------------------------
+
 
 class TestAccuracyDrop:
     def test_drop_detected(self):
@@ -211,6 +240,7 @@ class TestAccuracyDrop:
 # Weight shift detection
 # ---------------------------------------------------------------------------
 
+
 class TestWeightShift:
     def test_shift_detected(self):
         cfg = AlertConfig(weight_shift_threshold=0.3)
@@ -249,6 +279,7 @@ class TestWeightShift:
 # ---------------------------------------------------------------------------
 # Drawdown detection
 # ---------------------------------------------------------------------------
+
 
 class TestDrawdown:
     def test_drawdown_detected(self):
@@ -294,6 +325,7 @@ class TestDrawdown:
 # ---------------------------------------------------------------------------
 # AlertManager -- callback delivery
 # ---------------------------------------------------------------------------
+
 
 class TestCallbackDelivery:
     def test_callback_receives_alert(self, tmp_path):
@@ -353,6 +385,7 @@ class TestCallbackDelivery:
 # AlertManager -- JSONL log
 # ---------------------------------------------------------------------------
 
+
 class TestJsonlLog:
     def test_alert_written_to_log(self, tmp_path):
         log_file = tmp_path / "alerts.jsonl"
@@ -411,6 +444,7 @@ class TestJsonlLog:
 # AlertManager -- rate limiting
 # ---------------------------------------------------------------------------
 
+
 class TestRateLimiting:
     def test_respects_max_alerts_per_hour(self, tmp_path):
         cfg = AlertConfig(
@@ -456,6 +490,7 @@ class TestRateLimiting:
 # ---------------------------------------------------------------------------
 # AlertManager -- deduplication
 # ---------------------------------------------------------------------------
+
 
 class TestDeduplication:
     def test_same_alert_type_suppressed(self, tmp_path):
@@ -521,6 +556,7 @@ class TestDeduplication:
 # ---------------------------------------------------------------------------
 # AlertManager -- history and acknowledgment
 # ---------------------------------------------------------------------------
+
 
 class TestHistoryAndAck:
     def test_get_recent(self, tmp_path):
@@ -595,6 +631,7 @@ class TestHistoryAndAck:
 # ---------------------------------------------------------------------------
 # AlertManager -- check_all integration
 # ---------------------------------------------------------------------------
+
 
 class TestCheckAllIntegration:
     def test_skips_checks_with_none_data(self, tmp_path):

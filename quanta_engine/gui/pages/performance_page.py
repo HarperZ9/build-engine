@@ -5,18 +5,24 @@ Shows model comparison table, prediction-vs-actual scatter chart,
 accuracy over time, and weight evolution.
 """
 
-import math
 import random
-from collections import deque
 
-from PyQt6.QtWidgets import (
-    QWidget, QVBoxLayout, QHBoxLayout, QLabel, QPushButton,
-    QScrollArea, QSizePolicy, QGridLayout, QFrame,
-    QHeaderView, QTableWidget, QTableWidgetItem,
-)
-from PyQt6.QtCore import Qt, QTimer, QRectF, QPointF
+from PyQt6.QtCore import QPointF, QRectF, Qt
 from PyQt6.QtGui import (
-    QPainter, QPen, QColor, QBrush, QFont, QLinearGradient,
+    QColor,
+    QFont,
+    QPainter,
+    QPen,
+)
+from PyQt6.QtWidgets import (
+    QHBoxLayout,
+    QHeaderView,
+    QLabel,
+    QScrollArea,
+    QTableWidget,
+    QTableWidgetItem,
+    QVBoxLayout,
+    QWidget,
 )
 
 from quanta_engine.gui.app import C, Card, Heading, Stat, StatusDot
@@ -69,11 +75,11 @@ class PredictionScatterChart(QWidget):
 
         p.setPen(Qt.PenStyle.NoPen)
         p.setBrush(q_correct)
-        p.drawRect(QRectF(cx, pad, chart_w / 2, chart_h / 2))       # Q1
-        p.drawRect(QRectF(pad, cy, chart_w / 2, chart_h / 2))       # Q3
+        p.drawRect(QRectF(cx, pad, chart_w / 2, chart_h / 2))  # Q1
+        p.drawRect(QRectF(pad, cy, chart_w / 2, chart_h / 2))  # Q3
         p.setBrush(q_wrong)
-        p.drawRect(QRectF(pad, pad, chart_w / 2, chart_h / 2))      # Q2
-        p.drawRect(QRectF(cx, cy, chart_w / 2, chart_h / 2))        # Q4
+        p.drawRect(QRectF(pad, pad, chart_w / 2, chart_h / 2))  # Q2
+        p.drawRect(QRectF(cx, cy, chart_w / 2, chart_h / 2))  # Q4
 
         # Axes
         axis_pen = QPen(QColor(C.BORDER_LT), 1)
@@ -84,8 +90,7 @@ class PredictionScatterChart(QWidget):
         # Axis labels
         p.setPen(QColor(C.TEXT2))
         p.setFont(QFont("Segoe UI", 9))
-        p.drawText(QRectF(cx - 50, h - pad + 4, 100, 20),
-                   Qt.AlignmentFlag.AlignCenter, "Predicted")
+        p.drawText(QRectF(cx - 50, h - pad + 4, 100, 20), Qt.AlignmentFlag.AlignCenter, "Predicted")
         p.save()
         p.translate(14, cy)
         p.rotate(-90)
@@ -181,7 +186,7 @@ class AccuracyTimeChart(QWidget):
             "neural": C.GREEN,
         }
 
-        max_len = max(len(v) for v in self._series.values()) if self._series else 0
+        max(len(v) for v in self._series.values()) if self._series else 0
 
         # Draw lines
         legend_x = pad_x + 10
@@ -274,10 +279,7 @@ class WeightEvolutionChart(QWidget):
         bar_w = max(2, chart_w / n)
         for i in range(n):
             x = pad_x + (i / max(n - 1, 1)) * (chart_w - bar_w)
-            total = sum(
-                self._series[name][i] if i < len(self._series[name]) else 0
-                for name in model_names
-            )
+            total = sum(self._series[name][i] if i < len(self._series[name]) else 0 for name in model_names)
             if total == 0:
                 total = 1
 
@@ -497,11 +499,13 @@ class PerformancePage(QWidget):
                 series.append(v)
             return series
 
-        self._accuracy_time_chart.set_data({
-            "arima": gen_accuracy_series(62),
-            "prophet": gen_accuracy_series(55),
-            "neural": gen_accuracy_series(48),
-        })
+        self._accuracy_time_chart.set_data(
+            {
+                "arima": gen_accuracy_series(62),
+                "prophet": gen_accuracy_series(55),
+                "neural": gen_accuracy_series(48),
+            }
+        )
 
         # Weight evolution demo
         def gen_weight_series(base, n=30):
@@ -513,11 +517,13 @@ class PerformancePage(QWidget):
                 series.append(v)
             return series
 
-        self._weight_chart.set_data({
-            "arima": gen_weight_series(0.38),
-            "prophet": gen_weight_series(0.30),
-            "neural": gen_weight_series(0.23),
-        })
+        self._weight_chart.set_data(
+            {
+                "arima": gen_weight_series(0.38),
+                "prophet": gen_weight_series(0.30),
+                "neural": gen_weight_series(0.23),
+            }
+        )
 
         # Regime change alerts demo
         demo_alerts = [

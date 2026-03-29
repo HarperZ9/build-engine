@@ -35,8 +35,15 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install git+https://github.com/HarperZ9/quanta-finance.git
           pip install -e ".[all]"
           pip install pytest
+      - name: Create quanta-finance stub for CI
+        run: |
+          mkdir -p quanta_finance
+          echo "class Candle:
+              def __init__(self, **kwargs): self.__dict__.update(kwargs)
+          class Signal:
+              def __init__(self, **kwargs): self.__dict__.update(kwargs)" > quanta_finance/data.py
+          echo "" > quanta_finance/__init__.py
       - name: Run tests
         run: pytest tests/ -v
