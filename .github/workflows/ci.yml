@@ -37,13 +37,13 @@ jobs:
           python -m pip install --upgrade pip
           pip install -e ".[all]"
           pip install pytest
-      - name: Create quanta-finance stub for CI
+      - name: Create cross-project stubs for CI
+        shell: bash
         run: |
-          mkdir -p quanta_finance
-          echo "class Candle:
-              def __init__(self, **kwargs): self.__dict__.update(kwargs)
-          class Signal:
-              def __init__(self, **kwargs): self.__dict__.update(kwargs)" > quanta_finance/data.py
-          echo "" > quanta_finance/__init__.py
+          mkdir -p quanta_finance quanta_oracle
+          printf 'class Candle:\n    def __init__(self, **kw): self.__dict__.update(kw)\nclass Signal:\n    def __init__(self, **kw): self.__dict__.update(kw)\n' > quanta_finance/data.py
+          printf '' > quanta_finance/__init__.py
+          printf 'class BaseForecaster:\n    def __init__(self, **kw): self.__dict__.update(kw)\n    def fit(self, *a, **kw): return self\n    def predict(self, *a, **kw): return []\nclass ARIMAForecaster(BaseForecaster): pass\nclass NeuralForecaster(BaseForecaster): pass\nclass EnsembleForecaster(BaseForecaster): pass\n' > quanta_oracle/forecasting.py
+          printf '' > quanta_oracle/__init__.py
       - name: Run tests
         run: pytest tests/ -v
