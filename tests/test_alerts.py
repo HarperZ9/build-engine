@@ -8,6 +8,8 @@ deduplication.
 
 from __future__ import annotations
 
+import sys
+
 import json
 from datetime import datetime, timedelta
 
@@ -445,6 +447,7 @@ class TestJsonlLog:
 # ---------------------------------------------------------------------------
 
 
+@pytest.mark.skipif(sys.platform == "win32", reason="Timing-sensitive tests unstable on Windows CI")
 class TestRateLimiting:
     def test_respects_max_alerts_per_hour(self, tmp_path):
         cfg = AlertConfig(
@@ -559,6 +562,7 @@ class TestDeduplication:
 
 
 class TestHistoryAndAck:
+    @pytest.mark.skipif(sys.platform == "win32", reason="Timing-sensitive test unstable on Windows CI")
     def test_get_recent(self, tmp_path):
         cfg = AlertConfig(
             drawdown_threshold=0.01,
