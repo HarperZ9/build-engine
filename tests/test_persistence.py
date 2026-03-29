@@ -4,20 +4,19 @@ Tests for the persistence layer.
 Covers state save/load roundtrip, trade history append/retrieve,
 and graceful handling of missing or corrupt files.
 """
+
 from __future__ import annotations
 
-import json
-import time
 from pathlib import Path
 
 import pytest
 
 from quanta_engine.persistence import EngineState
 
-
 # ---------------------------------------------------------------------------
 # Fixtures
 # ---------------------------------------------------------------------------
+
 
 @pytest.fixture
 def state_dir(tmp_path: Path) -> Path:
@@ -35,6 +34,7 @@ def es(state_dir: Path) -> EngineState:
 # ---------------------------------------------------------------------------
 # Fake engine for save() testing
 # ---------------------------------------------------------------------------
+
 
 class _FakeTracker:
     def get_model_weights(self):
@@ -70,6 +70,7 @@ class _FakeEngine:
 # ---------------------------------------------------------------------------
 # State save/load roundtrip
 # ---------------------------------------------------------------------------
+
 
 class TestStateSaveLoad:
     """Test state.json save and load."""
@@ -113,7 +114,9 @@ class TestStateSaveLoad:
         assert result == {}
 
     def test_load_returns_empty_on_corrupt_json(
-        self, es: EngineState, state_dir: Path,
+        self,
+        es: EngineState,
+        state_dir: Path,
     ):
         """load() returns {} when state.json is invalid JSON."""
         state_dir.mkdir(parents=True, exist_ok=True)
@@ -123,7 +126,9 @@ class TestStateSaveLoad:
         assert result == {}
 
     def test_load_returns_empty_on_non_dict(
-        self, es: EngineState, state_dir: Path,
+        self,
+        es: EngineState,
+        state_dir: Path,
     ):
         """load() returns {} when state.json contains a non-dict value."""
         state_dir.mkdir(parents=True, exist_ok=True)
@@ -134,6 +139,7 @@ class TestStateSaveLoad:
 
     def test_save_with_minimal_engine(self, es: EngineState):
         """save() works with an engine that has no tracker or config."""
+
         class _Bare:
             cycle_count = 0
 
@@ -146,6 +152,7 @@ class TestStateSaveLoad:
 # ---------------------------------------------------------------------------
 # Trade history
 # ---------------------------------------------------------------------------
+
 
 class TestTradeHistory:
     """Test trades.jsonl append-only log."""
@@ -210,15 +217,15 @@ class TestTradeHistory:
         assert es.load_trades() == []
 
     def test_load_trades_skips_corrupt_lines(
-        self, es: EngineState, state_dir: Path,
+        self,
+        es: EngineState,
+        state_dir: Path,
     ):
         """Corrupt lines in trades.jsonl are skipped, valid ones kept."""
         state_dir.mkdir(parents=True, exist_ok=True)
         trades_path = state_dir / "trades.jsonl"
         trades_path.write_text(
-            '{"symbol":"AAPL","side":"buy"}\n'
-            'not valid json\n'
-            '{"symbol":"BTC-USD","side":"sell"}\n',
+            '{"symbol":"AAPL","side":"buy"}\nnot valid json\n{"symbol":"BTC-USD","side":"sell"}\n',
             encoding="utf-8",
         )
 
@@ -242,6 +249,7 @@ class TestTradeHistory:
 # ---------------------------------------------------------------------------
 # Clear and repr
 # ---------------------------------------------------------------------------
+
 
 class TestClearAndRepr:
     """Test utility methods."""

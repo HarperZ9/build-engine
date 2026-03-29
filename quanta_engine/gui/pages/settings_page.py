@@ -5,16 +5,25 @@ Broker credentials, default models, data directory, and module
 status indicators.
 """
 
-from PyQt6.QtWidgets import (
-    QWidget, QVBoxLayout, QHBoxLayout, QLabel, QPushButton,
-    QScrollArea, QLineEdit, QCheckBox, QGridLayout,
-    QFileDialog, QFrame, QSpinBox, QComboBox, QSlider,
-    QDoubleSpinBox,
-)
 from PyQt6.QtCore import Qt
-from PyQt6.QtGui import QFont
+from PyQt6.QtWidgets import (
+    QCheckBox,
+    QComboBox,
+    QDoubleSpinBox,
+    QFileDialog,
+    QGridLayout,
+    QHBoxLayout,
+    QLabel,
+    QLineEdit,
+    QPushButton,
+    QScrollArea,
+    QSlider,
+    QSpinBox,
+    QVBoxLayout,
+    QWidget,
+)
 
-from quanta_engine.gui.app import C, Card, Heading, Stat, StatusDot
+from quanta_engine.gui.app import C, Card, Heading, StatusDot
 
 
 class SettingsPage(QWidget):
@@ -211,9 +220,7 @@ class SettingsPage(QWidget):
         self._cfg_risk_label = QLabel("2%")
         self._cfg_risk_label.setFixedWidth(35)
         self._cfg_risk_label.setStyleSheet(f"font-weight: 600; color: {C.ACCENT_TX};")
-        self._cfg_risk_slider.valueChanged.connect(
-            lambda v: self._cfg_risk_label.setText(f"{v}%")
-        )
+        self._cfg_risk_slider.valueChanged.connect(lambda v: self._cfg_risk_label.setText(f"{v}%"))
         risk_pct.addWidget(self._cfg_risk_slider)
         risk_pct.addWidget(self._cfg_risk_label)
         risk_grid.addLayout(risk_pct, 3, 1)
@@ -251,7 +258,7 @@ class SettingsPage(QWidget):
             self._module_grid.addWidget(dot, row, 0)
 
             name_label = QLabel(name)
-            name_label.setStyleSheet(f"font-weight: 600; font-size: 12px;")
+            name_label.setStyleSheet("font-weight: 600; font-size: 12px;")
             name_label.setFixedWidth(130)
             self._module_grid.addWidget(name_label, row, 1)
 

@@ -6,18 +6,29 @@ with live activity logging. Engine runs in a QThread to keep the GUI
 responsive.
 """
 
-import time
 import logging
+import time
 
+from PyQt6.QtCore import Qt, QThread, pyqtSignal
+from PyQt6.QtGui import QFont, QTextCursor
 from PyQt6.QtWidgets import (
-    QWidget, QVBoxLayout, QHBoxLayout, QLabel, QPushButton,
-    QScrollArea, QLineEdit, QCheckBox, QSpinBox, QSlider,
-    QComboBox, QTextEdit, QSizePolicy, QGridLayout, QFrame,
+    QCheckBox,
+    QComboBox,
+    QFrame,
+    QGridLayout,
+    QHBoxLayout,
+    QLabel,
+    QLineEdit,
+    QPushButton,
+    QScrollArea,
+    QSlider,
+    QSpinBox,
+    QTextEdit,
+    QVBoxLayout,
+    QWidget,
 )
-from PyQt6.QtCore import Qt, QThread, pyqtSignal, QTimer
-from PyQt6.QtGui import QFont, QTextCursor, QColor
 
-from quanta_engine.gui.app import C, Card, Heading, Stat, StatusDot
+from quanta_engine.gui.app import C, Card, Heading, StatusDot
 
 logger = logging.getLogger(__name__)
 
@@ -49,7 +60,7 @@ class EngineWorker(QThread):
                 min_confidence=self._config_dict["min_confidence"],
             )
 
-            self.log_line.emit(f"Initializing engine...")
+            self.log_line.emit("Initializing engine...")
             self.log_line.emit(f"  Symbols : {config.symbols}")
             self.log_line.emit(f"  Models  : {config.models}")
             self.log_line.emit(f"  Paper   : {config.paper_trading}")
@@ -147,8 +158,7 @@ class EngineControlPage(QWidget):
         # Paper trading banner
         self._paper_banner = QFrame()
         self._paper_banner.setStyleSheet(
-            f"background: {C.GREEN_BG}; border: 1px solid {C.GREEN_MUT}; "
-            f"border-radius: 10px; padding: 10px 16px;"
+            f"background: {C.GREEN_BG}; border: 1px solid {C.GREEN_MUT}; border-radius: 10px; padding: 10px 16px;"
         )
         banner_lay = QHBoxLayout(self._paper_banner)
         banner_lay.setContentsMargins(12, 6, 12, 6)
@@ -215,9 +225,7 @@ class EngineControlPage(QWidget):
         self._risk_label = QLabel("2%")
         self._risk_label.setFixedWidth(35)
         self._risk_label.setStyleSheet(f"font-weight: 600; color: {C.ACCENT_TX};")
-        self._risk_slider.valueChanged.connect(
-            lambda v: self._risk_label.setText(f"{v}%")
-        )
+        self._risk_slider.valueChanged.connect(lambda v: self._risk_label.setText(f"{v}%"))
         risk_lay.addWidget(self._risk_slider)
         risk_lay.addWidget(self._risk_label)
         grid.addWidget(risk_widget, 3, 1)
@@ -242,9 +250,7 @@ class EngineControlPage(QWidget):
         self._conf_label = QLabel("30%")
         self._conf_label.setFixedWidth(35)
         self._conf_label.setStyleSheet(f"font-weight: 600; color: {C.ACCENT_TX};")
-        self._conf_slider.valueChanged.connect(
-            lambda v: self._conf_label.setText(f"{v}%")
-        )
+        self._conf_slider.valueChanged.connect(lambda v: self._conf_label.setText(f"{v}%"))
         conf_lay.addWidget(self._conf_slider)
         conf_lay.addWidget(self._conf_label)
         grid.addWidget(conf_widget, 5, 1)
@@ -283,8 +289,7 @@ class EngineControlPage(QWidget):
         self._log_text.setReadOnly(True)
         self._log_text.setFont(QFont("Cascadia Code", 10))
         self._log_text.setStyleSheet(
-            f"QTextEdit {{ background: #faf5f0; border: 1px solid {C.BORDER}; "
-            f"border-radius: 8px; padding: 10px; }}"
+            f"QTextEdit {{ background: #faf5f0; border: 1px solid {C.BORDER}; border-radius: 8px; padding: 10px; }}"
         )
         self._log_text.setPlaceholderText("Engine activity will appear here...")
         log_lay.addWidget(self._log_text, stretch=1)
@@ -306,15 +311,13 @@ class EngineControlPage(QWidget):
     def _update_paper_banner(self, paper: bool):
         if paper:
             self._paper_banner.setStyleSheet(
-                f"background: {C.GREEN_BG}; border: 1px solid {C.GREEN_MUT}; "
-                f"border-radius: 10px; padding: 10px 16px;"
+                f"background: {C.GREEN_BG}; border: 1px solid {C.GREEN_MUT}; border-radius: 10px; padding: 10px 16px;"
             )
             self._banner_dot.set_color(C.GREEN_MUT)
             self._banner_label.setText("Paper trading -- no real money at risk")
         else:
             self._paper_banner.setStyleSheet(
-                f"background: {C.RED_BG}; border: 1px solid {C.RED}; "
-                f"border-radius: 10px; padding: 10px 16px;"
+                f"background: {C.RED_BG}; border: 1px solid {C.RED}; border-radius: 10px; padding: 10px 16px;"
             )
             self._banner_dot.set_color(C.RED)
             self._banner_label.setText("LIVE TRADING -- real money at risk")

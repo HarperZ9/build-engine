@@ -6,4 +6,5 @@ The feedback loop:
 
 Integrates quanta-oracle (forecasting) with quanta-finance (trading).
 """
+
 __version__ = "1.0.0"

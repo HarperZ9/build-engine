@@ -8,6 +8,7 @@ Commands::
     quanta-engine backtest --symbols AAPL --days 252
     quanta-engine gui           (default when invoked with no arguments)
 """
+
 from __future__ import annotations
 
 import argparse
@@ -144,46 +145,64 @@ def main(argv: list[str] | None = None) -> None:
         description="Self-improving prediction and trading engine",
     )
     parser.add_argument(
-        "-v", "--verbose", action="store_true", help="Enable debug logging",
+        "-v",
+        "--verbose",
+        action="store_true",
+        help="Enable debug logging",
     )
     subparsers = parser.add_subparsers(dest="command")
 
     # -- run ---------------------------------------------------------------
     p_run = subparsers.add_parser("run", help="Run the adaptive engine")
     p_run.add_argument(
-        "--symbols", default="AAPL,BTC-USD",
+        "--symbols",
+        default="AAPL,BTC-USD",
         help="Comma-separated ticker symbols (default: AAPL,BTC-USD)",
     )
     p_run.add_argument(
-        "--models", default="arima,prophet",
+        "--models",
+        default="arima,prophet",
         help="Comma-separated model names (default: arima,prophet)",
     )
     p_run.add_argument(
-        "--paper", action="store_true", default=True,
+        "--paper",
+        action="store_true",
+        default=True,
         help="Use paper trading (default)",
     )
     p_run.add_argument(
-        "--live", action="store_true",
+        "--live",
+        action="store_true",
         help="Use live trading (overrides --paper)",
     )
     p_run.add_argument(
-        "--cycles", type=int, default=None,
+        "--cycles",
+        type=int,
+        default=None,
         help="Max cycles to run (default: unlimited)",
     )
     p_run.add_argument(
-        "--interval", type=int, default=300,
+        "--interval",
+        type=int,
+        default=300,
         help="Seconds between cycles (default: 300)",
     )
     p_run.add_argument(
-        "--risk", type=float, default=0.02,
+        "--risk",
+        type=float,
+        default=0.02,
         help="Risk per trade as fraction (default: 0.02)",
     )
     p_run.add_argument(
-        "--max-positions", type=int, default=5,
+        "--max-positions",
+        type=int,
+        default=5,
         help="Maximum simultaneous positions (default: 5)",
     )
     p_run.add_argument(
-        "--horizon", type=int, default=5,
+        "--horizon",
+        type=int,
+        default=5,
         help="Forecast horizon in steps (default: 5)",
     )
     p_run.set_defaults(func=_cmd_run)
@@ -191,27 +210,36 @@ def main(argv: list[str] | None = None) -> None:
     # -- backtest ----------------------------------------------------------
     p_bt = subparsers.add_parser("backtest", help="Backtest the prediction strategy")
     p_bt.add_argument(
-        "--symbols", default="AAPL",
+        "--symbols",
+        default="AAPL",
         help="Comma-separated ticker symbols (default: AAPL)",
     )
     p_bt.add_argument(
-        "--models", default="arima,prophet",
+        "--models",
+        default="arima,prophet",
         help="Comma-separated model names (default: arima,prophet)",
     )
     p_bt.add_argument(
-        "--days", type=int, default=252,
+        "--days",
+        type=int,
+        default=252,
         help="Number of trading days (default: 252)",
     )
     p_bt.add_argument(
-        "--capital", type=float, default=100_000,
+        "--capital",
+        type=float,
+        default=100_000,
         help="Initial capital (default: 100000)",
     )
     p_bt.add_argument(
-        "--horizon", type=int, default=5,
+        "--horizon",
+        type=int,
+        default=5,
         help="Forecast horizon in steps (default: 5)",
     )
     p_bt.add_argument(
-        "--monte-carlo", action="store_true",
+        "--monte-carlo",
+        action="store_true",
         help="Run Monte Carlo analysis after backtest",
     )
     p_bt.set_defaults(func=_cmd_backtest)

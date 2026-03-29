@@ -4,22 +4,21 @@ Tests for quanta-engine integration package.
 Covers config, model training, prediction strategy, performance tracking,
 adaptive engine lifecycle, and ensemble weight dynamics.
 """
-from __future__ import annotations
 
-import time
+from __future__ import annotations
 
 import numpy as np
 import pytest
 
 from quanta_engine.config import EngineConfig
 from quanta_engine.model_trainer import ModelTrainer
-from quanta_engine.performance_tracker import PerformanceTracker, PredictionRecord
+from quanta_engine.performance_tracker import PerformanceTracker
 from quanta_engine.prediction_strategy import PredictionStrategy
-
 
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
+
 
 def _make_candles(prices: list[float], symbol: str = "TEST") -> list:
     """Build a list of Candle objects from close prices."""
@@ -28,15 +27,17 @@ def _make_candles(prices: list[float], symbol: str = "TEST") -> list:
     candles = []
     base_ts = 1_700_000_000.0
     for i, price in enumerate(prices):
-        candles.append(Candle(
-            timestamp=base_ts + i * 86_400,
-            open=price * 0.999,
-            high=price * 1.01,
-            low=price * 0.99,
-            close=price,
-            volume=1_000_000.0,
-            symbol=symbol,
-        ))
+        candles.append(
+            Candle(
+                timestamp=base_ts + i * 86_400,
+                open=price * 0.999,
+                high=price * 1.01,
+                low=price * 0.99,
+                close=price,
+                volume=1_000_000.0,
+                symbol=symbol,
+            )
+        )
     return candles
 
 
@@ -52,6 +53,7 @@ def _trending_series(n: int = 100, start: float = 100.0, trend: float = 0.5) -> 
 # ---------------------------------------------------------------------------
 # EngineConfig tests
 # ---------------------------------------------------------------------------
+
 
 class TestEngineConfig:
     def test_defaults(self):
@@ -90,6 +92,7 @@ class TestEngineConfig:
 # ---------------------------------------------------------------------------
 # ModelTrainer tests
 # ---------------------------------------------------------------------------
+
 
 class TestModelTrainer:
     def test_train_arima(self):
@@ -152,6 +155,7 @@ class TestModelTrainer:
 # PredictionStrategy tests
 # ---------------------------------------------------------------------------
 
+
 class TestPredictionStrategy:
     def test_insufficient_candles_returns_empty(self):
         strategy = PredictionStrategy()
@@ -162,7 +166,7 @@ class TestPredictionStrategy:
     def test_generates_signals_from_trending_data(self):
         cfg = EngineConfig(
             models=["arima"],
-            min_confidence=0.0,       # Accept any signal
+            min_confidence=0.0,  # Accept any signal
             direction_threshold=0.0,  # Accept any direction
         )
         strategy = PredictionStrategy(cfg)
@@ -203,6 +207,7 @@ class TestPredictionStrategy:
 # ---------------------------------------------------------------------------
 # PerformanceTracker tests
 # ---------------------------------------------------------------------------
+
 
 class TestPerformanceTracker:
     def test_record_prediction(self):
@@ -256,11 +261,11 @@ class TestPerformanceTracker:
         tracker.evaluate_past({"A": 108.0})
 
         # 50% accuracy for prophet
-        for i in range(10):
+        for _i in range(10):
             tracker.record_prediction("prophet", 110.0, 100.0, symbol="B")
         tracker.evaluate_past({"B": 108.0})  # All correct now
         # Add wrong ones
-        for i in range(10):
+        for _i in range(10):
             tracker.record_prediction("prophet", 110.0, 100.0, symbol="C")
         tracker.evaluate_past({"C": 92.0})  # All wrong
 
@@ -305,6 +310,7 @@ class TestPerformanceTracker:
 # ---------------------------------------------------------------------------
 # AdaptiveEngine tests
 # ---------------------------------------------------------------------------
+
 
 class TestAdaptiveEngine:
     def test_engine_creation(self):
