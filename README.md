@@ -1,26 +1,30 @@
 # Quanta Engine
 
-Self-improving prediction and trading engine. Integrates **quanta-oracle** (forecasting) with **quanta-finance** (trading) into a single feedback loop.
+Quanta Engine is a paper-first adaptive prediction engine for market research,
+strategy simulation, and model feedback loops.
 
-## The Feedback Loop
+It connects `quanta-oracle` forecasting models with `quanta-finance` paper
+trading and backtesting primitives so predictions can be evaluated against
+outcomes instead of left as static charts.
 
+This repository is prepared for source-visible proprietary publication. The
+code is visible for review and portfolio context, but ownership and reuse rights
+remain reserved under the license in this repository.
+
+## What It Does
+
+```text
+Market data -> models train -> predictions -> paper trades
+       ^                                      |
+       |                                      v
+       +--------- results and weights <-------+
 ```
- +------------------+      +------------------+      +------------------+
- |   Market Data    | ---> |  Models Train     | ---> |   Predictions    |
- +------------------+      +------------------+      +------------------+
-                                                             |
- +------------------+      +------------------+              v
- |  Models Improve  | <--- |  Track Results   | <--- +------------------+
- +------------------+      +------------------+      | Trades Execute   |
-                                                      +------------------+
-```
 
-1. **Data** flows in (candles from Yahoo Finance or broker).
-2. **Oracle models** (ARIMA, Prophet, Neural) learn the patterns.
-3. **Predictions** are ensembled with dynamic weights.
-4. **Trades** execute through AutoTrader (paper or live via Alpaca).
-5. **Results** are tracked -- did the prediction get the direction right?
-6. **Models improve** -- accurate models get higher weight, poor ones shrink.
+- Trains forecasting models through `quanta-oracle`.
+- Converts model forecasts into strategy signals.
+- Runs those signals through `quanta-finance` paper execution primitives.
+- Tracks directional accuracy and adjusts model weights over time.
+- Keeps live broker execution behind explicit private-risk gates.
 
 ## Install
 
@@ -30,35 +34,52 @@ pip install -e ../quanta-finance
 pip install -e .
 ```
 
-## Usage
+The GUI code remains private/license-gated until the Qt binding posture is
+resolved. The public-ready package path is CLI and library first.
 
-### Run the engine (paper trading)
+## Paper Mode
+
+Paper trading is the default.
 
 ```bash
 quanta-engine run --symbols AAPL,BTC-USD --paper --cycles 10
 ```
 
-Paper trading is the default. Live Alpaca mode is intentionally explicit:
-
-```bash
-$env:APCA_API_KEY_ID="..."
-$env:APCA_API_SECRET_KEY="..."
-quanta-engine run --symbols AAPL --live --cycles 1
-```
-
-### Backtest the prediction strategy
+Backtest the prediction strategy:
 
 ```bash
 quanta-engine backtest --symbols AAPL --days 252 --monte-carlo
 ```
 
-### Check status
+Check status:
 
 ```bash
 quanta-engine status
 ```
 
-### Python API
+## Live Broker Mode
+
+Live broker mode is not the default public path. It requires all of the
+following:
+
+- `--live`
+- `QUANTA_ENGINE_LIVE_ACK=I_UNDERSTAND_LIVE_RISK` or matching `--live-ack`
+- `APCA_API_KEY_ID`
+- `APCA_API_SECRET_KEY`
+
+Example with placeholders:
+
+```powershell
+$env:QUANTA_ENGINE_LIVE_ACK="I_UNDERSTAND_LIVE_RISK"
+$env:APCA_API_KEY_ID="<paper-or-live-key-id>"
+$env:APCA_API_SECRET_KEY="<paper-or-live-secret>"
+quanta-engine run --symbols AAPL --live --live-ack I_UNDERSTAND_LIVE_RISK --cycles 1
+```
+
+The engine does not persist broker API keys or the live-mode acknowledgement in
+its saved state.
+
+## Python API
 
 ```python
 from quanta_engine.adaptive_engine import AdaptiveEngine
@@ -76,24 +97,49 @@ print(f"Equity: ${result['equity']:,.2f}")
 print(f"Accuracy: {result['accuracy']:.0%}")
 ```
 
+## Risk Posture
+
+This software is research and engineering tooling. It is not investment,
+financial, legal, tax, or trading advice. Model output can be wrong, delayed,
+overfit, incomplete, or inappropriate for real capital allocation. Paper mode is
+the supported default. Live broker mode is a private-risk capability and should
+be used only by an operator who understands the consequences.
+
 ## Architecture
 
 | Module | Role |
-|---|---|
-| `config.py` | Central configuration dataclass |
-| `model_trainer.py` | Wraps quanta-oracle model fitting and prediction |
-| `prediction_strategy.py` | Bridges oracle forecasts to quanta-finance Signals |
-| `performance_tracker.py` | Tracks accuracy and computes dynamic model weights |
-| `adaptive_engine.py` | Main loop wiring everything together |
-| `cli.py` | Command-line interface |
+| --- | --- |
+| `config.py` | Central configuration dataclass and live-mode acknowledgement constant. |
+| `model_trainer.py` | Wraps `quanta-oracle` model fitting and prediction. |
+| `prediction_strategy.py` | Bridges oracle forecasts to `quanta-finance` signals. |
+| `performance_tracker.py` | Tracks accuracy and computes dynamic model weights. |
+| `adaptive_engine.py` | Wires model training, prediction, broker setup, and feedback. |
+| `persistence.py` | Saves non-secret engine state and trade history. |
+| `cli.py` | Command-line interface. |
 
-## Dependencies
+## Verification Snapshot
 
-- **quanta-oracle** -- ARIMA, Prophet, Neural forecasting models
-- **quanta-finance** -- AutoTrader, PaperBroker, Backtester, Candle/Signal types
-- **numpy** >= 1.24
-- **scipy** >= 1.10
+Current release-gate evidence is recorded in the workspace roadmap contract:
+
+`project-docs/roadmaps/contracts/product-use-case-quanta-engine-2026-06-12.json`
+
+The public claim is intentionally narrow: adaptive forecasting and paper-first
+execution are verified; live broker mode remains explicit and private-risk
+gated.
+
+## About The Author
+
+Quanta Engine is part of Zain Dana Harper's Quanta workspace: a set of language,
+state, forecasting, color, and verification tools built around practical
+experiments rather than conventional product categories. The work is
+deliberately cross-disciplinary: compiler thinking, market simulation, visual
+systems, and local-first safety boundaries.
 
 ## License
 
-Copyright (c) 2022-2026 Zain Dana Harper. All rights reserved. See [LICENSE](LICENSE).
+Copyright (c) 2022-2026 Zain Dana Harper. All rights reserved.
+
+This is source-visible proprietary software. Visibility of the repository does
+not grant permission to copy, modify, redistribute, sublicense, sell, train on,
+or create derivative works from the software without written permission. See
+`LICENSE`.

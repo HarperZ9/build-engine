@@ -9,6 +9,8 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 
+LIVE_TRADING_ACK = "I_UNDERSTAND_LIVE_RISK"
+
 
 @dataclass
 class EngineConfig:
@@ -30,6 +32,8 @@ class EngineConfig:
         Alpaca API secret for live mode. If empty, APCA_API_SECRET_KEY is used.
     broker_base_url:
         Optional Alpaca API URL override for private/test deployments.
+    live_trading_ack:
+        Must equal LIVE_TRADING_ACK for live broker mode.
     models:
         Oracle model names to use (``"arima"``, ``"prophet"``, ``"neural"``).
     lookback_days:
@@ -54,6 +58,7 @@ class EngineConfig:
     broker_api_key: str = ""
     broker_api_secret: str = ""
     broker_base_url: str = ""
+    live_trading_ack: str = ""
 
     # Prediction
     models: list[str] = field(default_factory=lambda: ["arima", "prophet"])

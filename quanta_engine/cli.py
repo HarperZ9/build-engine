@@ -31,6 +31,7 @@ def _cmd_run(args: argparse.Namespace) -> None:
         risk_per_trade=args.risk,
         max_positions=args.max_positions,
         forecast_horizon=args.horizon,
+        live_trading_ack=args.live_ack,
     )
 
     engine = AdaptiveEngine(config)
@@ -132,7 +133,7 @@ def _cmd_gui(args: argparse.Namespace) -> None:
     try:
         from quanta_engine.gui import launch
     except ImportError:
-        print("GUI requires PyQt6.  Install with: pip install quanta-engine[gui]")
+        print("GUI is private/license-gated. Install a compatible Qt binding in your local environment.")
         sys.exit(1)
 
     sys.exit(launch())
@@ -174,6 +175,11 @@ def main(argv: list[str] | None = None) -> None:
         "--live",
         action="store_true",
         help="Use live trading (overrides --paper)",
+    )
+    p_run.add_argument(
+        "--live-ack",
+        default="",
+        help="Required live-mode acknowledgement value; also accepted from QUANTA_ENGINE_LIVE_ACK.",
     )
     p_run.add_argument(
         "--cycles",

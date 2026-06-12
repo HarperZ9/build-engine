@@ -58,6 +58,10 @@ class _FakeConfig:
     risk_per_trade = 0.02
     forecast_horizon = 5
     min_confidence = 0.3
+    broker_api_key = "test-key-should-not-persist"
+    broker_api_secret = "test-secret-should-not-persist"
+    broker_base_url = "https://example.invalid"
+    live_trading_ack = "I_UNDERSTAND_LIVE_RISK"
 
 
 class _FakeEngine:
@@ -96,6 +100,23 @@ class TestStateSaveLoad:
         assert loaded["config"]["symbols"] == ["AAPL", "BTC-USD"]
         assert loaded["config"]["paper_trading"] is True
         assert "timestamp" in loaded
+
+    def test_save_does_not_persist_broker_credentials(self, es: EngineState):
+        """State snapshots must not include live broker secrets."""
+        engine = _FakeEngine()
+        es.save(engine)
+
+        loaded = es.load()
+        config = loaded["config"]
+        text = str(loaded)
+
+        assert "broker_api_key" not in config
+        assert "broker_api_secret" not in config
+        assert "broker_base_url" not in config
+        assert "live_trading_ack" not in config
+        assert "test-key-should-not-persist" not in text
+        assert "test-secret-should-not-persist" not in text
+        assert "I_UNDERSTAND_LIVE_RISK" not in text
 
     def test_save_overwrites_previous(self, es: EngineState):
         """A second save replaces the first cleanly."""

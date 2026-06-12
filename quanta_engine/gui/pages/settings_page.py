@@ -59,15 +59,15 @@ class SettingsPage(QWidget):
         broker_grid.setSpacing(10)
         broker_grid.setColumnMinimumWidth(0, 100)
 
-        broker_grid.addWidget(QLabel("API Key:"), 0, 0, Qt.AlignmentFlag.AlignRight)
+        broker_grid.addWidget(QLabel("Env Key:"), 0, 0, Qt.AlignmentFlag.AlignRight)
         self._api_key = QLineEdit()
-        self._api_key.setPlaceholderText("Enter API key")
+        self._api_key.setPlaceholderText("APCA_API_KEY_ID")
         self._api_key.setEchoMode(QLineEdit.EchoMode.Password)
         broker_grid.addWidget(self._api_key, 0, 1)
 
-        broker_grid.addWidget(QLabel("API Secret:"), 1, 0, Qt.AlignmentFlag.AlignRight)
+        broker_grid.addWidget(QLabel("Env Secret:"), 1, 0, Qt.AlignmentFlag.AlignRight)
         self._api_secret = QLineEdit()
-        self._api_secret.setPlaceholderText("Enter API secret")
+        self._api_secret.setPlaceholderText("APCA_API_SECRET_KEY")
         self._api_secret.setEchoMode(QLineEdit.EchoMode.Password)
         broker_grid.addWidget(self._api_secret, 1, 1)
 
@@ -78,7 +78,7 @@ class SettingsPage(QWidget):
 
         broker_lay.addLayout(broker_grid)
 
-        btn_save_broker = QPushButton("Save Credentials")
+        btn_save_broker = QPushButton("Use Environment Variables")
         btn_save_broker.setCursor(Qt.CursorShape.PointingHandCursor)
         btn_save_broker.clicked.connect(self._save_broker)
         broker_lay.addWidget(btn_save_broker, alignment=Qt.AlignmentFlag.AlignLeft)
@@ -336,8 +336,10 @@ class SettingsPage(QWidget):
             self._data_dir.setText(path)
 
     def _save_broker(self):
+        self._api_key.clear()
+        self._api_secret.clear()
         if self._main_window:
-            self._main_window.show_toast("Broker credentials saved", "success")
+            self._main_window.show_toast("Credentials are read from environment variables only", "info")
 
     def _save_defaults(self):
         if self._main_window:
