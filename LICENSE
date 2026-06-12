@@ -1,14 +1,16 @@
 Copyright (c) 2022-2026 Zain Dana Harper. All rights reserved.
 
-PROPRIETARY SOFTWARE LICENSE
+SOURCE-VISIBLE PROPRIETARY SOFTWARE LICENSE
 
 This software and associated documentation files (the "Software") are the
 exclusive property of Zain Dana Harper. The Software is protected by
 copyright law and international treaties.
 
+Repository visibility does not grant a public license.
+
 NO PERMISSION IS GRANTED to use, copy, modify, merge, publish, distribute,
-sublicense, sell, or create derivative works of the Software, in whole or
-in part, without the prior written consent of the copyright holder.
+sublicense, sell, train on, or create derivative works of the Software, in
+whole or in part, without the prior written consent of the copyright holder.
 
 RESTRICTIONS:
 1. You may not reverse engineer, decompile, or disassemble the Software.

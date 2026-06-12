@@ -25,10 +25,6 @@ Issues = "https://github.com/HarperZ9/quanta-engine/issues"
 [project.scripts]
 quanta-engine = "quanta_engine.cli:main"
 
-[project.optional-dependencies]
-gui = ["PyQt6>=6.5,<7", "quanta-ui>=1.0.0"]
-all = ["PyQt6>=6.5,<7"]
-
 [tool.setuptools.packages.find]
 include = ["quanta_engine*"]
 

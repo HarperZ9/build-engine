@@ -22,7 +22,7 @@ import logging
 import os
 import time
 
-from quanta_engine.config import EngineConfig
+from quanta_engine.config import LIVE_TRADING_ACK, EngineConfig
 from quanta_engine.model_trainer import ModelTrainer
 from quanta_engine.performance_tracker import PerformanceTracker
 from quanta_engine.prediction_strategy import PredictionStrategy
@@ -67,6 +67,13 @@ class AdaptiveEngine:
             self.broker = PaperBroker(initial_capital=100_000)
         else:
             from quanta_finance.broker import AlpacaBroker, BrokerConfig
+
+            ack = self.config.live_trading_ack or os.environ.get("QUANTA_ENGINE_LIVE_ACK", "")
+            if ack != LIVE_TRADING_ACK:
+                raise ValueError(
+                    "Live Alpaca mode requires QUANTA_ENGINE_LIVE_ACK=I_UNDERSTAND_LIVE_RISK "
+                    "or EngineConfig.live_trading_ack with the same value."
+                )
 
             api_key = self.config.broker_api_key or os.environ.get("APCA_API_KEY_ID", "")
             api_secret = self.config.broker_api_secret or os.environ.get("APCA_API_SECRET_KEY", "")

@@ -10,7 +10,7 @@ from __future__ import annotations
 import numpy as np
 import pytest
 
-from quanta_engine.config import EngineConfig
+from quanta_engine.config import LIVE_TRADING_ACK, EngineConfig
 from quanta_engine.model_trainer import ModelTrainer
 from quanta_engine.performance_tracker import PerformanceTracker
 from quanta_engine.prediction_strategy import PredictionStrategy
@@ -65,6 +65,7 @@ class TestEngineConfig:
         assert cfg.broker_api_key == ""
         assert cfg.broker_api_secret == ""
         assert cfg.broker_base_url == ""
+        assert cfg.live_trading_ack == ""
 
     def test_model_defaults(self):
         cfg = EngineConfig()
@@ -348,12 +349,27 @@ class TestAdaptiveEngine:
         status = engine.get_status()
         assert status["equity"] == 100_000.0
 
-    def test_live_engine_requires_credentials(self, monkeypatch):
+    def test_live_engine_requires_acknowledgement(self, monkeypatch):
+        from quanta_engine.adaptive_engine import AdaptiveEngine
+
+        monkeypatch.delenv("QUANTA_ENGINE_LIVE_ACK", raising=False)
+        monkeypatch.delenv("APCA_API_KEY_ID", raising=False)
+        monkeypatch.delenv("APCA_API_SECRET_KEY", raising=False)
+        cfg = EngineConfig(
+            paper_trading=False,
+            broker_api_key="test-key",
+            broker_api_secret="test-secret",
+        )
+
+        with pytest.raises(ValueError, match="QUANTA_ENGINE_LIVE_ACK"):
+            AdaptiveEngine(cfg)
+
+    def test_live_engine_requires_credentials_after_ack(self, monkeypatch):
         from quanta_engine.adaptive_engine import AdaptiveEngine
 
         monkeypatch.delenv("APCA_API_KEY_ID", raising=False)
         monkeypatch.delenv("APCA_API_SECRET_KEY", raising=False)
-        cfg = EngineConfig(paper_trading=False)
+        cfg = EngineConfig(paper_trading=False, live_trading_ack=LIVE_TRADING_ACK)
 
         with pytest.raises(ValueError, match="Live Alpaca mode requires"):
             AdaptiveEngine(cfg)
@@ -367,11 +383,27 @@ class TestAdaptiveEngine:
             broker_api_key="test-key",
             broker_api_secret="test-secret",
             broker_base_url="https://example.invalid",
+            live_trading_ack=LIVE_TRADING_ACK,
         )
         engine = AdaptiveEngine(cfg)
 
         assert isinstance(engine.broker, AlpacaBroker)
         assert engine.broker.base_url == "https://example.invalid"
+
+    def test_live_engine_accepts_env_acknowledgement(self, monkeypatch):
+        from quanta_engine.adaptive_engine import AdaptiveEngine
+        from quanta_finance.broker import AlpacaBroker
+
+        monkeypatch.setenv("QUANTA_ENGINE_LIVE_ACK", LIVE_TRADING_ACK)
+        cfg = EngineConfig(
+            paper_trading=False,
+            broker_api_key="test-key",
+            broker_api_secret="test-secret",
+            broker_base_url="https://example.invalid",
+        )
+        engine = AdaptiveEngine(cfg)
+
+        assert isinstance(engine.broker, AlpacaBroker)
 
     def test_engine_stop(self):
         from quanta_engine.adaptive_engine import AdaptiveEngine
