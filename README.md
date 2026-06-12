@@ -38,6 +38,14 @@ pip install -e .
 quanta-engine run --symbols AAPL,BTC-USD --paper --cycles 10
 ```
 
+Paper trading is the default. Live Alpaca mode is intentionally explicit:
+
+```bash
+$env:APCA_API_KEY_ID="..."
+$env:APCA_API_SECRET_KEY="..."
+quanta-engine run --symbols AAPL --live --cycles 1
+```
+
 ### Backtest the prediction strategy
 
 ```bash

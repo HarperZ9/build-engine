@@ -62,6 +62,9 @@ class TestEngineConfig:
         assert cfg.risk_per_trade == 0.02
         assert cfg.max_positions == 5
         assert cfg.paper_trading is True
+        assert cfg.broker_api_key == ""
+        assert cfg.broker_api_secret == ""
+        assert cfg.broker_base_url == ""
 
     def test_model_defaults(self):
         cfg = EngineConfig()
@@ -344,6 +347,31 @@ class TestAdaptiveEngine:
         assert engine.config.models == ["arima"]
         status = engine.get_status()
         assert status["equity"] == 100_000.0
+
+    def test_live_engine_requires_credentials(self, monkeypatch):
+        from quanta_engine.adaptive_engine import AdaptiveEngine
+
+        monkeypatch.delenv("APCA_API_KEY_ID", raising=False)
+        monkeypatch.delenv("APCA_API_SECRET_KEY", raising=False)
+        cfg = EngineConfig(paper_trading=False)
+
+        with pytest.raises(ValueError, match="Live Alpaca mode requires"):
+            AdaptiveEngine(cfg)
+
+    def test_live_engine_uses_config_credentials(self):
+        from quanta_engine.adaptive_engine import AdaptiveEngine
+        from quanta_finance.broker import AlpacaBroker
+
+        cfg = EngineConfig(
+            paper_trading=False,
+            broker_api_key="test-key",
+            broker_api_secret="test-secret",
+            broker_base_url="https://example.invalid",
+        )
+        engine = AdaptiveEngine(cfg)
+
+        assert isinstance(engine.broker, AlpacaBroker)
+        assert engine.broker.base_url == "https://example.invalid"
 
     def test_engine_stop(self):
         from quanta_engine.adaptive_engine import AdaptiveEngine
