@@ -24,6 +24,12 @@ class EngineConfig:
         Maximum simultaneous open positions.
     paper_trading:
         If True, use PaperBroker; otherwise AlpacaBroker.
+    broker_api_key:
+        Alpaca API key for live mode. If empty, APCA_API_KEY_ID is used.
+    broker_api_secret:
+        Alpaca API secret for live mode. If empty, APCA_API_SECRET_KEY is used.
+    broker_base_url:
+        Optional Alpaca API URL override for private/test deployments.
     models:
         Oracle model names to use (``"arima"``, ``"prophet"``, ``"neural"``).
     lookback_days:
@@ -45,6 +51,9 @@ class EngineConfig:
     risk_per_trade: float = 0.02
     max_positions: int = 5
     paper_trading: bool = True
+    broker_api_key: str = ""
+    broker_api_secret: str = ""
+    broker_base_url: str = ""
 
     # Prediction
     models: list[str] = field(default_factory=lambda: ["arima", "prophet"])

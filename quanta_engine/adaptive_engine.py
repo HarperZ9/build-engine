@@ -19,6 +19,7 @@ feeds the results back to adjust model weights.
 from __future__ import annotations
 
 import logging
+import os
 import time
 
 from quanta_engine.config import EngineConfig
@@ -67,8 +68,19 @@ class AdaptiveEngine:
         else:
             from quanta_finance.broker import AlpacaBroker, BrokerConfig
 
+            api_key = self.config.broker_api_key or os.environ.get("APCA_API_KEY_ID", "")
+            api_secret = self.config.broker_api_secret or os.environ.get("APCA_API_SECRET_KEY", "")
+            if not api_key or not api_secret:
+                raise ValueError(
+                    "Live Alpaca mode requires broker_api_key/broker_api_secret "
+                    "or APCA_API_KEY_ID/APCA_API_SECRET_KEY."
+                )
+
             broker_cfg = BrokerConfig(
                 name="alpaca",
+                api_key=api_key,
+                api_secret=api_secret,
+                base_url=self.config.broker_base_url,
                 paper_trading=False,
             )
             self.broker = AlpacaBroker(broker_cfg)
