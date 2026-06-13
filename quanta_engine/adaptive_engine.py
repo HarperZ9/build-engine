@@ -79,8 +79,7 @@ class AdaptiveEngine:
             api_secret = self.config.broker_api_secret or os.environ.get("APCA_API_SECRET_KEY", "")
             if not api_key or not api_secret:
                 raise ValueError(
-                    "Live Alpaca mode requires broker_api_key/broker_api_secret "
-                    "or APCA_API_KEY_ID/APCA_API_SECRET_KEY."
+                    "Live Alpaca mode requires broker_api_key/broker_api_secret or APCA_API_KEY_ID/APCA_API_SECRET_KEY."
                 )
 
             broker_cfg = BrokerConfig(

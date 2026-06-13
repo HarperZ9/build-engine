@@ -375,8 +375,9 @@ class TestAdaptiveEngine:
             AdaptiveEngine(cfg)
 
     def test_live_engine_uses_config_credentials(self):
-        from quanta_engine.adaptive_engine import AdaptiveEngine
         from quanta_finance.broker import AlpacaBroker
+
+        from quanta_engine.adaptive_engine import AdaptiveEngine
 
         cfg = EngineConfig(
             paper_trading=False,
@@ -391,8 +392,9 @@ class TestAdaptiveEngine:
         assert engine.broker.base_url == "https://example.invalid"
 
     def test_live_engine_accepts_env_acknowledgement(self, monkeypatch):
-        from quanta_engine.adaptive_engine import AdaptiveEngine
         from quanta_finance.broker import AlpacaBroker
+
+        from quanta_engine.adaptive_engine import AdaptiveEngine
 
         monkeypatch.setenv("QUANTA_ENGINE_LIVE_ACK", LIVE_TRADING_ACK)
         cfg = EngineConfig(
