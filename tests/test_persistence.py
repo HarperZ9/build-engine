@@ -11,7 +11,7 @@ from pathlib import Path
 
 import pytest
 
-from quanta_engine.persistence import EngineState
+from build_engine.persistence import EngineState
 
 # ---------------------------------------------------------------------------
 # Fixtures
@@ -21,7 +21,7 @@ from quanta_engine.persistence import EngineState
 @pytest.fixture
 def state_dir(tmp_path: Path) -> Path:
     """Return a fresh temporary directory for state files."""
-    d = tmp_path / "quanta-engine-test"
+    d = tmp_path / "build-engine-test"
     return d  # EngineState._ensure_dir creates it
 
 

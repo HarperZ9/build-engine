@@ -28,7 +28,7 @@ from PyQt6.QtWidgets import (
     QWidget,
 )
 
-from quanta_engine.gui.app import C, Card, Heading, StatusDot
+from build_engine.gui.app import C, Card, Heading, StatusDot
 
 logger = logging.getLogger(__name__)
 
@@ -48,8 +48,8 @@ class EngineWorker(QThread):
 
     def run(self):
         try:
-            from quanta_engine.adaptive_engine import AdaptiveEngine
-            from quanta_engine.config import EngineConfig
+            from build_engine.adaptive_engine import AdaptiveEngine
+            from build_engine.config import EngineConfig
 
             config = EngineConfig(
                 symbols=self._config_dict["symbols"],

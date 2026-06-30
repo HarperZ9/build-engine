@@ -1,5 +1,5 @@
 """
-Tests for quanta-engine integration package.
+Tests for build-engine integration package.
 
 Covers config, model training, prediction strategy, performance tracking,
 adaptive engine lifecycle, and ensemble weight dynamics.
@@ -10,10 +10,10 @@ from __future__ import annotations
 import numpy as np
 import pytest
 
-from quanta_engine.config import LIVE_TRADING_ACK, EngineConfig
-from quanta_engine.model_trainer import ModelTrainer
-from quanta_engine.performance_tracker import PerformanceTracker
-from quanta_engine.prediction_strategy import PredictionStrategy
+from build_engine.config import LIVE_TRADING_ACK, EngineConfig
+from build_engine.model_trainer import ModelTrainer
+from build_engine.performance_tracker import PerformanceTracker
+from build_engine.prediction_strategy import PredictionStrategy
 
 # ---------------------------------------------------------------------------
 # Helpers
@@ -22,7 +22,7 @@ from quanta_engine.prediction_strategy import PredictionStrategy
 
 def _make_candles(prices: list[float], symbol: str = "TEST") -> list:
     """Build a list of Candle objects from close prices."""
-    from quanta_finance.data import Candle
+    from build_finance.data import Candle
 
     candles = []
     base_ts = 1_700_000_000.0
@@ -181,7 +181,7 @@ class TestPredictionStrategy:
         assert isinstance(signals, list)
 
     def test_signal_has_correct_attributes(self):
-        from quanta_finance.data import Signal
+        from build_finance.data import Signal
 
         cfg = EngineConfig(
             models=["arima"],
@@ -318,7 +318,7 @@ class TestPerformanceTracker:
 
 class TestAdaptiveEngine:
     def test_engine_creation(self):
-        from quanta_engine.adaptive_engine import AdaptiveEngine
+        from build_engine.adaptive_engine import AdaptiveEngine
 
         engine = AdaptiveEngine()
         assert engine.config.paper_trading is True
@@ -326,7 +326,7 @@ class TestAdaptiveEngine:
         assert engine.running is False
 
     def test_engine_status(self):
-        from quanta_engine.adaptive_engine import AdaptiveEngine
+        from build_engine.adaptive_engine import AdaptiveEngine
 
         engine = AdaptiveEngine()
         status = engine.get_status()
@@ -336,7 +336,7 @@ class TestAdaptiveEngine:
         assert status["trades"] == 0
 
     def test_engine_custom_config(self):
-        from quanta_engine.adaptive_engine import AdaptiveEngine
+        from build_engine.adaptive_engine import AdaptiveEngine
 
         cfg = EngineConfig(
             symbols=["SPY"],
@@ -350,9 +350,9 @@ class TestAdaptiveEngine:
         assert status["equity"] == 100_000.0
 
     def test_live_engine_requires_acknowledgement(self, monkeypatch):
-        from quanta_engine.adaptive_engine import AdaptiveEngine
+        from build_engine.adaptive_engine import AdaptiveEngine
 
-        monkeypatch.delenv("QUANTA_ENGINE_LIVE_ACK", raising=False)
+        monkeypatch.delenv("BUILD_ENGINE_LIVE_ACK", raising=False)
         monkeypatch.delenv("APCA_API_KEY_ID", raising=False)
         monkeypatch.delenv("APCA_API_SECRET_KEY", raising=False)
         cfg = EngineConfig(
@@ -361,11 +361,11 @@ class TestAdaptiveEngine:
             broker_api_secret="test-secret",
         )
 
-        with pytest.raises(ValueError, match="QUANTA_ENGINE_LIVE_ACK"):
+        with pytest.raises(ValueError, match="BUILD_ENGINE_LIVE_ACK"):
             AdaptiveEngine(cfg)
 
     def test_live_engine_requires_credentials_after_ack(self, monkeypatch):
-        from quanta_engine.adaptive_engine import AdaptiveEngine
+        from build_engine.adaptive_engine import AdaptiveEngine
 
         monkeypatch.delenv("APCA_API_KEY_ID", raising=False)
         monkeypatch.delenv("APCA_API_SECRET_KEY", raising=False)
@@ -375,9 +375,9 @@ class TestAdaptiveEngine:
             AdaptiveEngine(cfg)
 
     def test_live_engine_uses_config_credentials(self):
-        from quanta_finance.broker import AlpacaBroker
+        from build_finance.broker import AlpacaBroker
 
-        from quanta_engine.adaptive_engine import AdaptiveEngine
+        from build_engine.adaptive_engine import AdaptiveEngine
 
         cfg = EngineConfig(
             paper_trading=False,
@@ -392,11 +392,11 @@ class TestAdaptiveEngine:
         assert engine.broker.base_url == "https://example.invalid"
 
     def test_live_engine_accepts_env_acknowledgement(self, monkeypatch):
-        from quanta_finance.broker import AlpacaBroker
+        from build_finance.broker import AlpacaBroker
 
-        from quanta_engine.adaptive_engine import AdaptiveEngine
+        from build_engine.adaptive_engine import AdaptiveEngine
 
-        monkeypatch.setenv("QUANTA_ENGINE_LIVE_ACK", LIVE_TRADING_ACK)
+        monkeypatch.setenv("BUILD_ENGINE_LIVE_ACK", LIVE_TRADING_ACK)
         cfg = EngineConfig(
             paper_trading=False,
             broker_api_key="test-key",
@@ -408,7 +408,7 @@ class TestAdaptiveEngine:
         assert isinstance(engine.broker, AlpacaBroker)
 
     def test_engine_stop(self):
-        from quanta_engine.adaptive_engine import AdaptiveEngine
+        from build_engine.adaptive_engine import AdaptiveEngine
 
         engine = AdaptiveEngine()
         engine.running = True

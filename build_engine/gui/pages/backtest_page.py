@@ -31,7 +31,7 @@ from PyQt6.QtWidgets import (
     QWidget,
 )
 
-from quanta_engine.gui.app import C, Card, Heading, Stat
+from build_engine.gui.app import C, Card, Heading, Stat
 
 
 class BacktestEquityChart(QWidget):
@@ -179,14 +179,14 @@ class BacktestWorker(QThread):
             self.log_line.emit("")
 
             try:
-                from quanta_finance.backtest import (
+                from build_finance.backtest import (
                     BacktestConfig,
                     Backtester,
                     generate_sample_data,
                 )
 
-                from quanta_engine.config import EngineConfig
-                from quanta_engine.prediction_strategy import PredictionStrategy
+                from build_engine.config import EngineConfig
+                from build_engine.prediction_strategy import PredictionStrategy
 
                 engine_config = EngineConfig(
                     symbols=[self._config["symbol"]],
@@ -244,7 +244,7 @@ class BacktestWorker(QThread):
                 return
 
             except ImportError:
-                self.log_line.emit("  quanta-finance not available, generating synthetic results...")
+                self.log_line.emit("  build-finance not available, generating synthetic results...")
 
             # Synthetic backtest results
             capital = self._config["capital"]

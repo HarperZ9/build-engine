@@ -40,13 +40,13 @@ jobs:
       - name: Create cross-project stubs for CI
         shell: bash
         run: |
-          mkdir -p quanta_finance quanta_oracle
-          printf 'class Candle:\n    def __init__(self, **kw): self.__dict__.update(kw)\nclass Signal:\n    def __init__(self, **kw): self.__dict__.update(kw)\n' > quanta_finance/data.py
-          printf '' > quanta_finance/__init__.py
-          printf '' > quanta_oracle/__init__.py
-          printf 'class BaseForecaster:\n    def __init__(self, **kw): self.__dict__.update(kw)\n    def fit(self, *a, **kw): return self\n    def predict(self, *a, **kw): return []\n' > quanta_oracle/forecasting.py
-          printf 'class ARIMA:\n    def __init__(self, *a, **kw): pass\n    def fit(self, *a, **kw): return self\n    def predict(self, *a, **kw): return [0.0]\n' > quanta_oracle/arima.py
-          printf 'class Prophet:\n    def __init__(self, *a, **kw): pass\n    def fit(self, *a, **kw): return self\n    def predict(self, *a, **kw): return [0.0]\n' > quanta_oracle/prophet.py
-          printf 'class SimpleForecaster:\n    def __init__(self, *a, **kw): pass\n    def fit(self, *a, **kw): return self\n    def predict(self, *a, **kw): return [0.0]\n' > quanta_oracle/neural.py
+          mkdir -p build_finance build_oracle
+          printf 'class Candle:\n    def __init__(self, **kw): self.__dict__.update(kw)\nclass Signal:\n    def __init__(self, **kw): self.__dict__.update(kw)\n' > build_finance/data.py
+          printf '' > build_finance/__init__.py
+          printf '' > build_oracle/__init__.py
+          printf 'class BaseForecaster:\n    def __init__(self, **kw): self.__dict__.update(kw)\n    def fit(self, *a, **kw): return self\n    def predict(self, *a, **kw): return []\n' > build_oracle/forecasting.py
+          printf 'class ARIMA:\n    def __init__(self, *a, **kw): pass\n    def fit(self, *a, **kw): return self\n    def predict(self, *a, **kw): return [0.0]\n' > build_oracle/arima.py
+          printf 'class Prophet:\n    def __init__(self, *a, **kw): pass\n    def fit(self, *a, **kw): return self\n    def predict(self, *a, **kw): return [0.0]\n' > build_oracle/prophet.py
+          printf 'class SimpleForecaster:\n    def __init__(self, *a, **kw): pass\n    def fit(self, *a, **kw): return self\n    def predict(self, *a, **kw): return [0.0]\n' > build_oracle/neural.py
       - name: Run tests (skip cross-project integration tests)
         run: pytest tests/ -v --ignore=tests/test_prediction_strategy.py --ignore=tests/test_model_trainer.py --ignore=tests/test_engine.py

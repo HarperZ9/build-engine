@@ -1,5 +1,5 @@
 """
-Tests for quanta_engine.performance_tracker.PerformanceTracker.
+Tests for build_engine.performance_tracker.PerformanceTracker.
 
 Covers record creation, direction classification, evaluation correctness,
 model weight computation, per-model stats, overall accuracy, and the
@@ -12,8 +12,8 @@ import time
 
 import pytest
 
-from quanta_engine.config import EngineConfig
-from quanta_engine.performance_tracker import PerformanceTracker
+from build_engine.config import EngineConfig
+from build_engine.performance_tracker import PerformanceTracker
 
 # ---------------------------------------------------------------------------
 # Construction

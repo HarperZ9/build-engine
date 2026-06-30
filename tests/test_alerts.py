@@ -1,5 +1,5 @@
 """
-Tests for quanta_engine.alerts -- regime change detection and alert system.
+Tests for build_engine.alerts -- regime change detection and alert system.
 
 Covers each detection method with synthetic data, AlertManager delivery
 pipeline, rate limiting, JSONL log writing, callback delivery, and
@@ -15,7 +15,7 @@ from datetime import datetime, timedelta
 import numpy as np
 import pytest
 
-from quanta_engine.alerts import (
+from build_engine.alerts import (
     Alert,
     AlertConfig,
     AlertLevel,
