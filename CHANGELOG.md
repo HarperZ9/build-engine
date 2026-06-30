@@ -3,7 +3,7 @@
 ## v1.0.0 (2026-03-22)
 
 ### Features
-- **Adaptive forecasting engine** integrating quanta-oracle models with quanta-finance execution
+- **Adaptive forecasting engine** integrating build-oracle models with build-finance execution
 - **Dynamic model weighting** based on prediction accuracy feedback loop
 - **Multi-model ensemble**: ARIMA, Prophet-style, and neural network predictions combined
 - **Prediction-driven trading signals** with configurable thresholds

@@ -121,7 +121,7 @@ class AlertConfig:
     drawdown_threshold: float = 0.10
     trend_fast_period: int = 10
     trend_slow_period: int = 30
-    log_path: Path = Path.home() / ".quanta-engine" / "alerts.jsonl"
+    log_path: Path = Path.home() / ".build-engine" / "alerts.jsonl"
     webhook_url: str | None = None
     max_alerts_per_hour: int = 10
     dedup_window_seconds: int = 300  # 5 minutes

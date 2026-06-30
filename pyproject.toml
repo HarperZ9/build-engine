@@ -3,7 +3,7 @@ requires = ["setuptools>=68.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "quanta-engine"
+name = "build-engine"
 version = "1.0.0"
 description = "Self-improving prediction and trading engine — integrates forecasting with automated execution"
 readme = "README.md"
@@ -18,15 +18,15 @@ classifiers = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/HarperZ9/quanta-engine"
-Repository = "https://github.com/HarperZ9/quanta-engine"
-Issues = "https://github.com/HarperZ9/quanta-engine/issues"
+Homepage = "https://github.com/HarperZ9/build-engine"
+Repository = "https://github.com/HarperZ9/build-engine"
+Issues = "https://github.com/HarperZ9/build-engine/issues"
 
 [project.scripts]
-quanta-engine = "quanta_engine.cli:main"
+build-engine = "build_engine.cli:main"
 
 [tool.setuptools.packages.find]
-include = ["quanta_engine*"]
+include = ["build_engine*"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

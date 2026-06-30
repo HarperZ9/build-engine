@@ -1,9 +1,9 @@
-# Quanta Engine
+# Build Engine
 
-Quanta Engine is a paper-first adaptive prediction engine for market research,
+Build Engine is a paper-first adaptive prediction engine for market research,
 strategy simulation, and model feedback loops.
 
-It connects `quanta-oracle` forecasting models with `quanta-finance` paper
+It connects `build-oracle` forecasting models with `build-finance` paper
 trading and backtesting primitives so predictions can be evaluated against
 outcomes instead of left as static charts.
 
@@ -20,17 +20,17 @@ Market data -> models train -> predictions -> paper trades
        +--------- results and weights <-------+
 ```
 
-- Trains forecasting models through `quanta-oracle`.
+- Trains forecasting models through `build-oracle`.
 - Converts model forecasts into strategy signals.
-- Runs those signals through `quanta-finance` paper execution primitives.
+- Runs those signals through `build-finance` paper execution primitives.
 - Tracks directional accuracy and adjusts model weights over time.
 - Keeps live broker execution behind explicit private-risk gates.
 
 ## Install
 
 ```bash
-pip install -e ../quanta-oracle
-pip install -e ../quanta-finance
+pip install -e ../build-oracle
+pip install -e ../build-finance
 pip install -e .
 ```
 
@@ -42,19 +42,19 @@ resolved. The public-ready package path is CLI and library first.
 Paper trading is the default.
 
 ```bash
-quanta-engine run --symbols AAPL,BTC-USD --paper --cycles 10
+build-engine run --symbols AAPL,BTC-USD --paper --cycles 10
 ```
 
 Backtest the prediction strategy:
 
 ```bash
-quanta-engine backtest --symbols AAPL --days 252 --monte-carlo
+build-engine backtest --symbols AAPL --days 252 --monte-carlo
 ```
 
 Check status:
 
 ```bash
-quanta-engine status
+build-engine status
 ```
 
 ## Live Broker Mode
@@ -63,17 +63,17 @@ Live broker mode is not the default public path. It requires all of the
 following:
 
 - `--live`
-- `QUANTA_ENGINE_LIVE_ACK=I_UNDERSTAND_LIVE_RISK` or matching `--live-ack`
+- `BUILD_ENGINE_LIVE_ACK=I_UNDERSTAND_LIVE_RISK` or matching `--live-ack`
 - `APCA_API_KEY_ID`
 - `APCA_API_SECRET_KEY`
 
 Example with placeholders:
 
 ```powershell
-$env:QUANTA_ENGINE_LIVE_ACK="I_UNDERSTAND_LIVE_RISK"
+$env:BUILD_ENGINE_LIVE_ACK="I_UNDERSTAND_LIVE_RISK"
 $env:APCA_API_KEY_ID="<paper-or-live-key-id>"
 $env:APCA_API_SECRET_KEY="<paper-or-live-secret>"
-quanta-engine run --symbols AAPL --live --live-ack I_UNDERSTAND_LIVE_RISK --cycles 1
+build-engine run --symbols AAPL --live --live-ack I_UNDERSTAND_LIVE_RISK --cycles 1
 ```
 
 The engine does not persist broker API keys or the live-mode acknowledgement in
@@ -82,8 +82,8 @@ its saved state.
 ## Python API
 
 ```python
-from quanta_engine.adaptive_engine import AdaptiveEngine
-from quanta_engine.config import EngineConfig
+from build_engine.adaptive_engine import AdaptiveEngine
+from build_engine.config import EngineConfig
 
 config = EngineConfig(
     symbols=["AAPL", "BTC-USD"],
@@ -110,8 +110,8 @@ be used only by an operator who understands the consequences.
 | Module | Role |
 | --- | --- |
 | `config.py` | Central configuration dataclass and live-mode acknowledgement constant. |
-| `model_trainer.py` | Wraps `quanta-oracle` model fitting and prediction. |
-| `prediction_strategy.py` | Bridges oracle forecasts to `quanta-finance` signals. |
+| `model_trainer.py` | Wraps `build-oracle` model fitting and prediction. |
+| `prediction_strategy.py` | Bridges oracle forecasts to `build-finance` signals. |
 | `performance_tracker.py` | Tracks accuracy and computes dynamic model weights. |
 | `adaptive_engine.py` | Wires model training, prediction, broker setup, and feedback. |
 | `persistence.py` | Saves non-secret engine state and trade history. |
@@ -121,7 +121,7 @@ be used only by an operator who understands the consequences.
 
 Current release-gate evidence is recorded in the workspace roadmap contract:
 
-`project-docs/roadmaps/contracts/product-use-case-quanta-engine-2026-06-12.json`
+`project-docs/roadmaps/contracts/product-use-case-build-engine-2026-06-12.json`
 
 The public claim is intentionally narrow: adaptive forecasting and paper-first
 execution are verified; live broker mode remains explicit and private-risk
@@ -129,7 +129,7 @@ gated.
 
 ## About The Author
 
-Quanta Engine is part of Zain Dana Harper's Quanta workspace: a set of language,
+Build Engine is part of Zain Dana Harper's Build workspace: a set of language,
 state, forecasting, color, and verification tools built around practical
 experiments rather than conventional product categories. The work is
 deliberately cross-disciplinary: compiler thinking, market simulation, visual

@@ -30,7 +30,7 @@ from PyQt6.QtWidgets import (
     QWidget,
 )
 
-from quanta_engine.gui.app import C, Card, Heading
+from build_engine.gui.app import C, Card, Heading
 
 
 class PriceChartWidget(QWidget):
@@ -181,7 +181,7 @@ class FetchWorker(QThread):
         try:
             if self._source == "Yahoo Finance":
                 try:
-                    from quanta_finance.market_data import fetch_yahoo
+                    from build_finance.market_data import fetch_yahoo
 
                     candles = fetch_yahoo(self._symbol, period="6mo", interval="1d")
                     if candles:

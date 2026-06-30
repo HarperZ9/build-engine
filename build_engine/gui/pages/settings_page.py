@@ -23,7 +23,7 @@ from PyQt6.QtWidgets import (
     QWidget,
 )
 
-from quanta_engine.gui.app import C, Card, Heading, StatusDot
+from build_engine.gui.app import C, Card, Heading, StatusDot
 
 
 class SettingsPage(QWidget):
@@ -245,9 +245,9 @@ class SettingsPage(QWidget):
 
         self._module_dots = {}
         modules = [
-            ("quanta-oracle", "Forecasting models (ARIMA, Prophet, Neural)"),
-            ("quanta-finance", "Trading execution (AutoTrader, Backtester)"),
-            ("quanta-engine", "Adaptive engine (this package)"),
+            ("build-oracle", "Forecasting models (ARIMA, Prophet, Neural)"),
+            ("build-finance", "Trading execution (AutoTrader, Backtester)"),
+            ("build-engine", "Adaptive engine (this package)"),
             ("PyQt6", "GUI framework"),
             ("numpy", "Numerical computing"),
             ("pandas", "Data manipulation"),
@@ -281,10 +281,10 @@ class SettingsPage(QWidget):
         about_lay.addWidget(Heading("About", level=2))
 
         about_text = QLabel(
-            "<b>Quanta Engine</b> v1.0.0<br><br>"
+            "<b>Build Engine</b> v1.0.0<br><br>"
             "Self-improving prediction and trading engine.<br><br>"
-            "Integrates <b>quanta-oracle</b> forecasting models (ARIMA, Prophet, "
-            "Neural Network) with <b>quanta-finance</b> execution layer "
+            "Integrates <b>build-oracle</b> forecasting models (ARIMA, Prophet, "
+            "Neural Network) with <b>build-finance</b> execution layer "
             "(AutoTrader, Backtester, PaperBroker) for a complete "
             "prediction-trade-evaluate feedback loop.<br><br>"
             "The adaptive engine automatically adjusts model weights "
@@ -293,7 +293,7 @@ class SettingsPage(QWidget):
             "<b>Architecture:</b><br>"
             "Market Data -> Models Train -> Predictions -> Trades -> "
             "Results -> Models Improve<br><br>"
-            "Part of the <b>Quanta Universe</b> ecosystem."
+            "Part of the <b>Build Universe</b> ecosystem."
         )
         about_text.setWordWrap(True)
         about_text.setStyleSheet(f"font-size: 12px; color: {C.TEXT}; line-height: 1.5;")
@@ -310,9 +310,9 @@ class SettingsPage(QWidget):
     def _check_modules(self):
         """Check which modules are available."""
         checks = {
-            "quanta-oracle": "quanta_oracle",
-            "quanta-finance": "quanta_finance",
-            "quanta-engine": "quanta_engine",
+            "build-oracle": "build_oracle",
+            "build-finance": "build_finance",
+            "build-engine": "build_engine",
             "PyQt6": "PyQt6",
             "numpy": "numpy",
             "pandas": "pandas",

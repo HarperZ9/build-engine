@@ -1,5 +1,5 @@
 """
-Tests for quanta_engine.model_trainer.ModelTrainer.
+Tests for build_engine.model_trainer.ModelTrainer.
 
 Covers model creation with default/custom configs, training individual and
 combined models, prediction output, introspection methods, and edge cases
@@ -11,8 +11,8 @@ from __future__ import annotations
 import numpy as np
 import pytest
 
-from quanta_engine.config import EngineConfig
-from quanta_engine.model_trainer import ModelTrainer
+from build_engine.config import EngineConfig
+from build_engine.model_trainer import ModelTrainer
 
 # ---------------------------------------------------------------------------
 # Fixtures

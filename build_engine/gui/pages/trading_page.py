@@ -24,7 +24,7 @@ from PyQt6.QtWidgets import (
     QWidget,
 )
 
-from quanta_engine.gui.app import C, Card, Heading, Stat
+from build_engine.gui.app import C, Card, Heading, Stat
 
 # Signal Indicator Widget
 
