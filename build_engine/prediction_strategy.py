@@ -2,9 +2,9 @@
 Trading strategy powered by oracle forecasting models.
 
 This is the KEY integration class.  It implements the ``generate_signals``
-protocol expected by ``quanta_finance.autotrader.AutoTrader`` and
-``quanta_finance.backtest.Backtester``, but internally delegates to
-quanta-oracle models (ARIMA, Prophet, SimpleForecaster) via
+protocol expected by ``build_finance.autotrader.AutoTrader`` and
+``build_finance.backtest.Backtester``, but internally delegates to
+build-oracle models (ARIMA, Prophet, SimpleForecaster) via
 :class:`ModelTrainer`.
 
 Pipeline per call to ``generate_signals``:
@@ -22,8 +22,8 @@ from typing import TYPE_CHECKING
 
 import numpy as np
 
-from quanta_engine.config import EngineConfig
-from quanta_engine.model_trainer import ModelTrainer
+from build_engine.config import EngineConfig
+from build_engine.model_trainer import ModelTrainer
 
 if TYPE_CHECKING:
     pass
@@ -32,7 +32,7 @@ if TYPE_CHECKING:
 class PredictionStrategy:
     """Trading strategy powered by oracle forecasting models.
 
-    Implements the same interface as ``quanta_finance.strategies``::
+    Implements the same interface as ``build_finance.strategies``::
 
         generate_signals(candles: list[Candle]) -> list[Signal]
 
@@ -80,7 +80,7 @@ class PredictionStrategy:
         Parameters
         ----------
         candles:
-            A list of ``quanta_finance.data.Candle`` objects (must have
+            A list of ``build_finance.data.Candle`` objects (must have
             ``.close``, ``.symbol``, and ``.timestamp`` attributes).
 
         Returns
@@ -88,7 +88,7 @@ class PredictionStrategy:
         list[Signal]
             Zero or one Signal per call.
         """
-        from quanta_finance.data import Signal
+        from build_finance.data import Signal
 
         if len(candles) < 50:
             return []

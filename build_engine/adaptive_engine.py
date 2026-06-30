@@ -6,10 +6,10 @@ The feedback loop::
     Market Data -> Models Train -> Predictions -> Trades -> Results -> Models Improve
 
 :class:`AdaptiveEngine` wires together:
-    - :class:`ModelTrainer`        (quanta-oracle model management)
+    - :class:`ModelTrainer`        (build-oracle model management)
     - :class:`PredictionStrategy`  (oracle-to-signal bridge)
     - :class:`PerformanceTracker`  (accuracy tracking & weight adjustment)
-    - ``AutoTrader``               (quanta-finance execution layer)
+    - ``AutoTrader``               (build-finance execution layer)
     - ``PaperBroker`` / ``AlpacaBroker``
 
 Each *cycle* fetches data, generates predictions, executes trades, and
@@ -22,10 +22,10 @@ import logging
 import os
 import time
 
-from quanta_engine.config import LIVE_TRADING_ACK, EngineConfig
-from quanta_engine.model_trainer import ModelTrainer
-from quanta_engine.performance_tracker import PerformanceTracker
-from quanta_engine.prediction_strategy import PredictionStrategy
+from build_engine.config import LIVE_TRADING_ACK, EngineConfig
+from build_engine.model_trainer import ModelTrainer
+from build_engine.performance_tracker import PerformanceTracker
+from build_engine.prediction_strategy import PredictionStrategy
 
 logger = logging.getLogger(__name__)
 
@@ -61,17 +61,17 @@ class AdaptiveEngine:
 
     def _setup_broker(self) -> None:
         """Create the appropriate broker (paper or live)."""
-        from quanta_finance.broker import PaperBroker
+        from build_finance.broker import PaperBroker
 
         if self.config.paper_trading:
             self.broker = PaperBroker(initial_capital=100_000)
         else:
-            from quanta_finance.broker import AlpacaBroker, BrokerConfig
+            from build_finance.broker import AlpacaBroker, BrokerConfig
 
-            ack = self.config.live_trading_ack or os.environ.get("QUANTA_ENGINE_LIVE_ACK", "")
+            ack = self.config.live_trading_ack or os.environ.get("BUILD_ENGINE_LIVE_ACK", "")
             if ack != LIVE_TRADING_ACK:
                 raise ValueError(
-                    "Live Alpaca mode requires QUANTA_ENGINE_LIVE_ACK=I_UNDERSTAND_LIVE_RISK "
+                    "Live Alpaca mode requires BUILD_ENGINE_LIVE_ACK=I_UNDERSTAND_LIVE_RISK "
                     "or EngineConfig.live_trading_ack with the same value."
                 )
 
@@ -93,7 +93,7 @@ class AdaptiveEngine:
 
     def _setup_trader(self) -> None:
         """Create an AutoTrader wired to the prediction strategy."""
-        from quanta_finance.autotrader import AutoTrader, AutoTraderConfig
+        from build_finance.autotrader import AutoTrader, AutoTraderConfig
 
         trader_config = AutoTraderConfig(
             symbols=self.config.symbols,
@@ -169,7 +169,7 @@ class AdaptiveEngine:
         """Fetch market data with extended lookback for prediction models."""
         lookback = self._lookback
         try:
-            from quanta_finance.market_data import fetch_yahoo
+            from build_finance.market_data import fetch_yahoo
 
             candles = fetch_yahoo(symbol, period="6mo", interval="1d")
             if candles:

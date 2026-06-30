@@ -1,5 +1,5 @@
 """
-Quanta Engine -- Main Application
+Build Engine -- Main Application
 
 Professional self-improving prediction and trading dashboard with sidebar
 navigation, page transitions, and the shared Calibrate Pro visual framework.
@@ -39,9 +39,9 @@ from PyQt6.QtWidgets import (
     QVBoxLayout,
     QWidget,
 )
-from quanta_ui.theme import STYLE
-from quanta_ui.theme import C as _BaseC
-from quanta_ui.widgets import Heading, Sidebar, StatusDot, ToastNotification
+from build_ui.theme import STYLE
+from build_ui.theme import C as _BaseC
+from build_ui.widgets import Heading, Sidebar, StatusDot, ToastNotification
 
 
 class C(_BaseC):
@@ -57,9 +57,9 @@ class C(_BaseC):
     CYAN_MUT = "#95b3ba"  # Powder blue
 
 
-APP_NAME = "Quanta Engine"
+APP_NAME = "Build Engine"
 APP_VERSION = "1.0.0"
-APP_ORG = "Quanta Universe"
+APP_ORG = "Build Universe"
 
 
 # Application Icon
@@ -203,7 +203,7 @@ PAGE_MENU_NAMES = [
 ]
 
 
-class QuantaEngineWindow(QMainWindow):
+class BuildEngineWindow(QMainWindow):
     """Main application window."""
 
     def __init__(self):
@@ -288,7 +288,7 @@ class QuantaEngineWindow(QMainWindow):
 
         # Page 0: Dashboard
         try:
-            from quanta_engine.gui.pages.dashboard import DashboardPage
+            from build_engine.gui.pages.dashboard import DashboardPage
 
             self.stack.addWidget(DashboardPage(self))
         except (ImportError, AttributeError, TypeError) as e:
@@ -297,7 +297,7 @@ class QuantaEngineWindow(QMainWindow):
 
         # Page 1: Trading
         try:
-            from quanta_engine.gui.pages.trading_page import TradingPage
+            from build_engine.gui.pages.trading_page import TradingPage
 
             self.stack.addWidget(TradingPage(self))
         except (ImportError, AttributeError, TypeError) as e:
@@ -306,7 +306,7 @@ class QuantaEngineWindow(QMainWindow):
 
         # Page 2: Engine Control
         try:
-            from quanta_engine.gui.pages.engine_page import EngineControlPage
+            from build_engine.gui.pages.engine_page import EngineControlPage
 
             self.stack.addWidget(EngineControlPage(self))
         except (ImportError, AttributeError, TypeError) as e:
@@ -315,7 +315,7 @@ class QuantaEngineWindow(QMainWindow):
 
         # Page 3: Performance
         try:
-            from quanta_engine.gui.pages.performance_page import PerformancePage
+            from build_engine.gui.pages.performance_page import PerformancePage
 
             self.stack.addWidget(PerformancePage(self))
         except (ImportError, AttributeError, TypeError) as e:
@@ -324,7 +324,7 @@ class QuantaEngineWindow(QMainWindow):
 
         # Page 4: Backtest
         try:
-            from quanta_engine.gui.pages.backtest_page import BacktestPage
+            from build_engine.gui.pages.backtest_page import BacktestPage
 
             self.stack.addWidget(BacktestPage(self))
         except (ImportError, AttributeError, TypeError) as e:
@@ -333,7 +333,7 @@ class QuantaEngineWindow(QMainWindow):
 
         # Page 5: Market Data
         try:
-            from quanta_engine.gui.pages.data_page import DataPage
+            from build_engine.gui.pages.data_page import DataPage
 
             self.stack.addWidget(DataPage(self))
         except (ImportError, AttributeError, TypeError) as e:
@@ -342,7 +342,7 @@ class QuantaEngineWindow(QMainWindow):
 
         # Page 6: Settings
         try:
-            from quanta_engine.gui.pages.settings_page import SettingsPage
+            from build_engine.gui.pages.settings_page import SettingsPage
 
             self.stack.addWidget(SettingsPage(self))
         except (ImportError, AttributeError, TypeError) as e:
@@ -421,7 +421,7 @@ class QuantaEngineWindow(QMainWindow):
 
     def _export_report(self):
         path, _ = QFileDialog.getSaveFileName(
-            self, "Export Report", "quanta_engine_report.txt", "Text Files (*.txt);;CSV Files (*.csv);;All Files (*)"
+            self, "Export Report", "build_engine_report.txt", "Text Files (*.txt);;CSV Files (*.csv);;All Files (*)"
         )
         if path:
             self._status.setText(f"Report exported: {path}")
@@ -453,10 +453,10 @@ class QuantaEngineWindow(QMainWindow):
             f"<h2>{APP_NAME}</h2>"
             f"<p>Version {APP_VERSION}</p>"
             f"<p>Self-improving prediction and trading engine.</p>"
-            f"<p>Integrates quanta-oracle forecasting models with<br>"
-            f"quanta-finance execution for a complete feedback loop.</p>"
+            f"<p>Integrates build-oracle forecasting models with<br>"
+            f"build-finance execution for a complete feedback loop.</p>"
             f"<p>Models: ARIMA, Prophet, Neural Network</p>"
-            f"<p>&copy; 2024-2026 Quanta Universe</p>",
+            f"<p>&copy; 2024-2026 Build Universe</p>",
         )
 
     # --- Geometry Persistence ---
@@ -478,6 +478,6 @@ class QuantaEngineWindow(QMainWindow):
 # Entry Point
 
 if __name__ == "__main__":
-    from quanta_engine.gui import launch
+    from build_engine.gui import launch
 
     sys.exit(launch())

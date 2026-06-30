@@ -1,7 +1,7 @@
 """
 Manages oracle model lifecycle: fitting, caching, prediction, and retraining.
 
-Wraps quanta_oracle models (ARIMA, Prophet, SimpleForecaster) behind a
+Wraps build_oracle models (ARIMA, Prophet, SimpleForecaster) behind a
 uniform train/predict interface so the rest of the engine never touches
 model internals directly.
 """
@@ -12,7 +12,7 @@ import logging
 
 import numpy as np
 
-from quanta_engine.config import EngineConfig
+from build_engine.config import EngineConfig
 
 logger = logging.getLogger(__name__)
 
@@ -39,7 +39,7 @@ class ModelTrainer:
     def train_all(self, series: np.ndarray) -> None:
         """Fit all configured models on *series*.
 
-        Each model type is imported lazily from ``quanta_oracle`` and
+        Each model type is imported lazily from ``build_oracle`` and
         trained according to its API.  Failures are logged and skipped
         so that one broken model does not block the rest.
         """
@@ -48,14 +48,14 @@ class ModelTrainer:
         for model_name in self.config.models:
             try:
                 if model_name == "arima":
-                    from quanta_oracle.arima import ARIMA
+                    from build_oracle.arima import ARIMA
 
                     model = ARIMA(p=2, d=1, q=1)
                     model.fit(series)
                     self.fitted_models["arima"] = model
 
                 elif model_name == "prophet":
-                    from quanta_oracle.prophet import Prophet
+                    from build_oracle.prophet import Prophet
 
                     model = Prophet(fourier_order=5)
                     t = np.arange(len(series), dtype=float)
@@ -63,7 +63,7 @@ class ModelTrainer:
                     self.fitted_models["prophet"] = model
 
                 elif model_name == "neural":
-                    from quanta_oracle.neural import SimpleForecaster
+                    from build_oracle.neural import SimpleForecaster
 
                     model = SimpleForecaster(
                         lookback=20,

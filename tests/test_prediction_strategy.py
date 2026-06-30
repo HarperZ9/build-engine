@@ -1,5 +1,5 @@
 """
-Tests for quanta_engine.prediction_strategy.PredictionStrategy.
+Tests for build_engine.prediction_strategy.PredictionStrategy.
 
 Covers strategy creation, signal generation with various data patterns
 (insufficient, trending up, trending down, flat), weight management,
@@ -9,11 +9,11 @@ signal attribute validation, and retrain triggering.
 from __future__ import annotations
 
 import numpy as np
-from quanta_finance.data import Candle, Signal
+from build_finance.data import Candle, Signal
 
-from quanta_engine.config import EngineConfig
-from quanta_engine.model_trainer import ModelTrainer
-from quanta_engine.prediction_strategy import PredictionStrategy
+from build_engine.config import EngineConfig
+from build_engine.model_trainer import ModelTrainer
+from build_engine.prediction_strategy import PredictionStrategy
 
 # ---------------------------------------------------------------------------
 # Helpers

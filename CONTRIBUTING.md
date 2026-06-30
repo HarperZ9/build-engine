@@ -1,6 +1,6 @@
 # Contributing
 
-Quanta Engine is source-visible proprietary software.
+Build Engine is source-visible proprietary software.
 
 Issues, bug reports, reproducible test cases, and documentation corrections are
 welcome. Code contributions are not accepted unless there is a prior written

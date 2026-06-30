@@ -1,12 +1,12 @@
 """
-Command-line interface for Quanta Engine.
+Command-line interface for Build Engine.
 
 Commands::
 
-    quanta-engine run --symbols AAPL,BTC-USD --paper --cycles 10
-    quanta-engine status
-    quanta-engine backtest --symbols AAPL --days 252
-    quanta-engine gui           (default when invoked with no arguments)
+    build-engine run --symbols AAPL,BTC-USD --paper --cycles 10
+    build-engine status
+    build-engine backtest --symbols AAPL --days 252
+    build-engine gui           (default when invoked with no arguments)
 """
 
 from __future__ import annotations
@@ -18,8 +18,8 @@ import sys
 
 def _cmd_run(args: argparse.Namespace) -> None:
     """Run the adaptive engine for N cycles."""
-    from quanta_engine.adaptive_engine import AdaptiveEngine
-    from quanta_engine.config import EngineConfig
+    from build_engine.adaptive_engine import AdaptiveEngine
+    from build_engine.config import EngineConfig
 
     symbols = [s.strip() for s in args.symbols.split(",")]
     models = [m.strip() for m in args.models.split(",")]
@@ -36,7 +36,7 @@ def _cmd_run(args: argparse.Namespace) -> None:
 
     engine = AdaptiveEngine(config)
 
-    print(f"Quanta Engine starting ({'paper' if args.paper else 'LIVE'})")
+    print(f"Build Engine starting ({'paper' if args.paper else 'LIVE'})")
     print(f"  Symbols : {symbols}")
     print(f"  Models  : {models}")
     print(f"  Cycles  : {args.cycles or 'unlimited'}")
@@ -67,10 +67,10 @@ def _cmd_run(args: argparse.Namespace) -> None:
 
 def _cmd_backtest(args: argparse.Namespace) -> None:
     """Run a backtest using PredictionStrategy on synthetic or real data."""
-    from quanta_finance.backtest import BacktestConfig, Backtester, generate_sample_data
+    from build_finance.backtest import BacktestConfig, Backtester, generate_sample_data
 
-    from quanta_engine.config import EngineConfig
-    from quanta_engine.prediction_strategy import PredictionStrategy
+    from build_engine.config import EngineConfig
+    from build_engine.prediction_strategy import PredictionStrategy
 
     symbols = [s.strip() for s in args.symbols.split(",")]
     models = [m.strip() for m in args.models.split(",")]
@@ -123,15 +123,15 @@ def _cmd_backtest(args: argparse.Namespace) -> None:
 
 def _cmd_status(args: argparse.Namespace) -> None:
     """Display engine status (placeholder for a persistent daemon)."""
-    print("Quanta Engine status")
+    print("Build Engine status")
     print("  No running engine detected.")
-    print("  Use 'quanta-engine run' to start a new session.")
+    print("  Use 'build-engine run' to start a new session.")
 
 
 def _cmd_gui(args: argparse.Namespace) -> None:
     """Launch the GUI (requires PyQt6)."""
     try:
-        from quanta_engine.gui import launch
+        from build_engine.gui import launch
     except ImportError:
         print("GUI is private/license-gated. Install a compatible Qt binding in your local environment.")
         sys.exit(1)
@@ -140,9 +140,9 @@ def _cmd_gui(args: argparse.Namespace) -> None:
 
 
 def main(argv: list[str] | None = None) -> None:
-    """Entry point for ``quanta-engine`` CLI."""
+    """Entry point for ``build-engine`` CLI."""
     parser = argparse.ArgumentParser(
-        prog="quanta-engine",
+        prog="build-engine",
         description="Self-improving prediction and trading engine",
     )
     parser.add_argument(
@@ -179,7 +179,7 @@ def main(argv: list[str] | None = None) -> None:
     p_run.add_argument(
         "--live-ack",
         default="",
-        help="Required live-mode acknowledgement value; also accepted from QUANTA_ENGINE_LIVE_ACK.",
+        help="Required live-mode acknowledgement value; also accepted from BUILD_ENGINE_LIVE_ACK.",
     )
     p_run.add_argument(
         "--cycles",

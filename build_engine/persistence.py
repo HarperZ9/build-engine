@@ -2,7 +2,7 @@
 Persistence layer for engine state.
 
 Saves/loads model weights, trade history, and performance metrics
-to JSON files in ``~/.quanta-engine/``.
+to JSON files in ``~/.build-engine/``.
 
 Files:
     - ``state.json``   -- model weights, accuracy history, config snapshot
@@ -19,7 +19,7 @@ from typing import Any
 
 logger = logging.getLogger(__name__)
 
-SAVE_DIR = Path.home() / ".quanta-engine"
+SAVE_DIR = Path.home() / ".build-engine"
 
 
 class EngineState:
@@ -31,7 +31,7 @@ class EngineState:
     Parameters
     ----------
     save_dir:
-        Override the default ``~/.quanta-engine/`` directory (useful
+        Override the default ``~/.build-engine/`` directory (useful
         for testing).
     """
 
