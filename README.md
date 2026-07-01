@@ -1,8 +1,23 @@
 <p align="center">
-  <img src="docs/brand/build-engine-hero.png" alt="Build Engine: Adaptive Prediction Engine">
+  <img src="docs/brand/build-engine-hero.png" alt="Build Engine, a self-improving adaptive prediction and paper-trading engine">
 </p>
+<!-- Project mark: docs/brand/build-engine-mark.svg -->
 
 # Build Engine
+
+> Self-improving adaptive prediction and paper-trading engine that bridges `build-oracle` forecasting models to `build-finance` execution through an accuracy feedback loop.
+
+[Project Telos](https://harperz9.github.io) | [gather](https://github.com/HarperZ9/gather) | [crucible](https://github.com/HarperZ9/crucible) | [index](https://github.com/HarperZ9/index) | [forum](https://github.com/HarperZ9/forum) | [telos](https://github.com/HarperZ9/telos) | [emet](https://github.com/HarperZ9/emet) | [buildlang](https://github.com/HarperZ9/buildlang)
+
+[![CI](https://github.com/HarperZ9/build-engine/actions/workflows/ci.yml/badge.svg)](https://github.com/HarperZ9/build-engine/actions/workflows/ci.yml)
+![version: 1.0.0](https://img.shields.io/badge/version-1.0.0-informational.svg)
+![python: 3.10+](https://img.shields.io/badge/python-3.10%2B-blue.svg)
+![core deps: numpy/scipy](https://img.shields.io/badge/core%20deps-numpy%2Fscipy-success.svg)
+[![license: fair-source](https://img.shields.io/badge/license-fair--source-blue.svg)](LICENSE)
+
+> **Not financial advice.** Paper trading is the default; live broker
+> execution is explicit opt-in and gated; the engine custodies no funds. Read
+> [SECURITY.md](SECURITY.md) before enabling live mode.
 
 Build Engine is a paper-first adaptive prediction engine for market research,
 strategy simulation, and model feedback loops.
@@ -11,9 +26,9 @@ It connects `build-oracle` forecasting models with `build-finance` paper
 trading and backtesting primitives so predictions can be evaluated against
 outcomes instead of left as static charts.
 
-This repository is prepared for source-visible proprietary publication. The
-code is visible for review and portfolio context, but ownership and reuse rights
-remain reserved under the license in this repository.
+This repository is published as fair-source software. The code is available for
+review, use, and building on, while commercial use that competes with the project
+is reserved under the license in this repository.
 
 ## What It Does
 
@@ -143,7 +158,8 @@ systems, and local-first safety boundaries.
 
 Copyright (c) 2022-2026 Zain Dana Harper. All rights reserved.
 
-This is source-visible proprietary software. Visibility of the repository does
-not grant permission to copy, modify, redistribute, sublicense, sell, train on,
-or create derivative works from the software without written permission. See
-`LICENSE`.
+Build Engine is released under the FSL-1.1-MIT.
+The source is available: you may read, run, copy, modify, and redistribute it for
+any purpose other than a Competing Use. Commercial use that competes with the
+project is reserved to the Licensor and requires a separate commercial license.
+See `LICENSE` for the full terms.

@@ -9,7 +9,6 @@ signal attribute validation, and retrain triggering.
 from __future__ import annotations
 
 import numpy as np
-from build_finance.data import Candle, Signal
 
 from build_engine.config import EngineConfig
 from build_engine.model_trainer import ModelTrainer
@@ -20,8 +19,16 @@ from build_engine.prediction_strategy import PredictionStrategy
 # ---------------------------------------------------------------------------
 
 
-def _make_candles(prices: list[float], symbol: str = "TEST") -> list[Candle]:
-    """Build Candle objects from a list of close prices."""
+def _make_candles(prices: list[float], symbol: str = "TEST") -> list:
+    """Build Candle objects from a list of close prices.
+
+    ``build_finance`` is imported lazily here (rather than at module
+    scope) so that collecting this test module does not hard-fail when
+    the optional sibling package ``build-finance`` is not installed --
+    matching the pattern used in ``tests/test_engine.py``.
+    """
+    from build_finance.data import Candle
+
     candles = []
     base_ts = 1_700_000_000.0
     for i, price in enumerate(prices):
@@ -170,6 +177,8 @@ class TestTrendingSignals:
 
 class TestSignalAttributes:
     def test_signal_is_signal_instance(self):
+        from build_finance.data import Signal
+
         strategy = _low_confidence_strategy()
         candles = _make_candles(_trending_up(80), symbol="AAPL")
         signals = strategy.generate_signals(candles)

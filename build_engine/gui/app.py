@@ -10,6 +10,9 @@ import sys
 
 logger = logging.getLogger(__name__)
 
+from build_ui.theme import STYLE
+from build_ui.theme import C as _BaseC
+from build_ui.widgets import Heading, Sidebar, StatusDot, ToastNotification
 from PyQt6.QtCore import (
     QEasingCurve,
     QPointF,
@@ -39,9 +42,6 @@ from PyQt6.QtWidgets import (
     QVBoxLayout,
     QWidget,
 )
-from build_ui.theme import STYLE
-from build_ui.theme import C as _BaseC
-from build_ui.widgets import Heading, Sidebar, StatusDot, ToastNotification
 
 
 class C(_BaseC):

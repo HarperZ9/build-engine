@@ -1,6 +1,7 @@
 # Contributing
 
-Build Engine is source-visible proprietary software.
+Build Engine is fair-source software, released under the Build Engine
+FSL-1.1-MIT.
 
 Issues, bug reports, reproducible test cases, and documentation corrections are
 welcome. Code contributions are not accepted unless there is a prior written
