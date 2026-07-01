@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "build-engine"
-version = "1.0.0"
+version = "1.0.1"
 description = "Self-improving adaptive prediction and paper-trading engine — bridges forecasting models to execution with an accuracy feedback loop"
 readme = "README.md"
 license = { text = "FSL-1.1-MIT" }

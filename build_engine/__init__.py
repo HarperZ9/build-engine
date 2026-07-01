@@ -7,4 +7,4 @@ The feedback loop:
 Integrates build-oracle (forecasting) with build-finance (trading).
 """
 
-__version__ = "1.0.0"
+__version__ = "1.0.1"
