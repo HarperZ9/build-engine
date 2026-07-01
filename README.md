@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="docs/brand/build-engine-hero.png" alt="Build Engine: Adaptive Prediction Engine">
+</p>
+
 # Build Engine
 
 Build Engine is a paper-first adaptive prediction engine for market research,
