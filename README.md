@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="docs/brand/build-engine-hero.png" alt="Build Engine, a self-improving adaptive prediction and paper-trading engine">
+  <img src=".github/assets/zentropy-banner.png" alt="Build Engine, a self-improving adaptive prediction and paper-trading engine">
 </p>
 <!-- Project mark: docs/brand/build-engine-mark.svg -->
 
@@ -163,3 +163,7 @@ The source is available: you may read, run, copy, modify, and redistribute it fo
 any purpose other than a Competing Use. Commercial use that competes with the
 project is reserved to the Licensor and requires a separate commercial license.
 See `LICENSE` for the full terms.
+
+---
+
+**[Zentropy Labs](https://github.com/ZentropyLabs-ai)** · order out of entropy. An independent lab building evidence-first tools that leave a re-checkable artifact behind. Built by Zain Dana Harper in Seattle. The full workbench is at [Project Telos](https://harperz9.github.io).
