@@ -52,3 +52,9 @@ jobs:
           printf 'class SimpleForecaster:\n    def __init__(self, *a, **kw): pass\n    def fit(self, *a, **kw): return self\n    def predict(self, *a, **kw): return [0.0]\n' > build_oracle/neural.py
       - name: Run tests with coverage (skip cross-project integration tests)
         run: pytest tests/ -q --ignore=tests/test_prediction_strategy.py --ignore=tests/test_model_trainer.py --ignore=tests/test_engine.py --cov=build_engine --cov-report=term-missing --cov-fail-under=48
+  art-receipts:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify art receipt digests
+        run: python3 scripts/check_art_receipts.py
