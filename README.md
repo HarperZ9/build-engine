@@ -1,19 +1,22 @@
-<p align="center">
-  <img src=".github/assets/banner.png" alt="Build Engine, a self-improving adaptive prediction and paper-trading engine">
-</p>
-<!-- Project mark: docs/brand/build-engine-mark.svg -->
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/HarperZ9/build-engine/main/docs/art/hero-dark.svg">
+  <img src="https://raw.githubusercontent.com/HarperZ9/build-engine/main/docs/art/hero-light.svg" alt="build-engine: Prediction engine that paper-trades forecasts and adjusts model weights. Bundles of fine lines carry the work through 4 stations, train, predict, paper trade and reweigh, along a sweeping path into a bright core." width="100%">
+</picture>
 
-# Build Engine
+# build-engine
 
-> Self-improving adaptive prediction and paper-trading engine that bridges `build-oracle` forecasting models to `build-finance` execution through an accuracy feedback loop.
+Prediction engine that paper-trades forecasts and adjusts model weights.
+
+```
+pip install -e ../build-oracle
+```
+
+[![version: 1.0.0](https://img.shields.io/badge/version-1.0.0-e6e1d6?style=flat-square&labelColor=1a1712)](https://github.com/HarperZ9/build-engine/releases/latest)
+[![CI](https://github.com/HarperZ9/build-engine/actions/workflows/ci.yml/badge.svg)](https://github.com/HarperZ9/build-engine/actions/workflows/ci.yml)
+[![license](https://img.shields.io/badge/license-FSL--1.1--MIT-e6e1d6?style=flat-square&labelColor=1a1712)](https://github.com/HarperZ9/build-engine/blob/main/LICENSE)
+![python 3.10+](https://img.shields.io/badge/python-3.10%2B-e6e1d6?style=flat-square&labelColor=1a1712)
 
 [Project Telos](https://harperz9.github.io) | [gather](https://github.com/HarperZ9/gather) | [crucible](https://github.com/HarperZ9/crucible) | [index](https://github.com/HarperZ9/index) | [forum](https://github.com/HarperZ9/forum) | [telos](https://github.com/HarperZ9/telos) | [emet](https://github.com/HarperZ9/emet) | [buildlang](https://github.com/HarperZ9/buildlang)
-
-[![CI](https://github.com/HarperZ9/build-engine/actions/workflows/ci.yml/badge.svg)](https://github.com/HarperZ9/build-engine/actions/workflows/ci.yml)
-![version: 1.0.1](https://img.shields.io/badge/version-1.0.1-informational.svg)
-![python: 3.10+](https://img.shields.io/badge/python-3.10%2B-blue.svg)
-![core deps: numpy/scipy](https://img.shields.io/badge/core%20deps-numpy%2Fscipy-success.svg)
-[![license: fair-source](https://img.shields.io/badge/license-fair--source-blue.svg)](LICENSE)
 
 > **Not financial advice.** Paper trading is the default; live broker
 > execution is explicit opt-in and gated; the engine custodies no funds. Read
